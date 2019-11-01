@@ -5,15 +5,19 @@
 
 <generatorConfiguration>
 
-    <context id="DB2Tables" targetRuntime="MyBatis3">
+    <context id="MysqlTables" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin><!--分页-->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/train?serverTimezone=UTC"
-                        userId="root"
-                        password="root">
+        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver"-->
+                        <!--connectionURL="jdbc:mysql://localhost:3306/train?serverTimezone=UTC"-->
+                        <!--userId="root"-->
+                        <!--password="root">-->
+            <!---->
+        <!--</jdbcConnection>-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/train?serverTimezone=UTC"
+                        userId="root" password="root">
+            <property name="nullCatalogMeansCurrent" value="true" />
         </jdbcConnection>
-
         <javaTypeResolver >
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
