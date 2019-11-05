@@ -36,9 +36,19 @@ public class loginController {
         //requestbody接收前端传来的json数据
         //responsebody将后台数据序列化成json传到前端
         //通过session获取当前用户
-        AdminExample adminExample = new AdminExample();
         StudentExample studentExample = new StudentExample();
         TeacherExample teacherExample = new TeacherExample();
+
+
+        AdminExample adminExample = new AdminExample();
+        adminExample.createCriteria()
+                .andAdminNameEqualTo(userDTO.getUsername())
+                .andAdminPwdEqualTo(userDTO.getPassword());
+
+        adminMapper.selectByExample(adminExample);
+
+
+
         if (adminExample.createCriteria().andAdminNameEqualTo(userDTO.getUsername())!=null){
             if(adminExample.createCriteria().andAdminPwdEqualTo(userDTO.getPassword())!=null){
 
