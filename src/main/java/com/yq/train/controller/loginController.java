@@ -74,7 +74,7 @@ public class loginController {
                         .setAttribute("role",null);
                 Student student = students.get(0);
 
-            }
+            }   
             if(teachers.size()>0){
                 Teacher teacher = teachers.get(0);
 
