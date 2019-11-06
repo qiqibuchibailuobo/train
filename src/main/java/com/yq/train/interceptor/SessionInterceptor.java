@@ -27,7 +27,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         System.out.println("URL:"+request.getRequestURL());
         if(request.getSession().getAttribute("user")==null){
             response.sendRedirect("/");
-//            return false;
+            
         }
 //        Cookie[] cookies = request.getCookies();
 //        if(cookies != null&&cookies.length != 0){

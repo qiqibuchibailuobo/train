@@ -90,5 +90,8 @@ public class loginController {
 
         return userDTO;
     }
-
+@GetMapping("/student")
+    public String loginStudent(){
+        return "student";
+}
 }
