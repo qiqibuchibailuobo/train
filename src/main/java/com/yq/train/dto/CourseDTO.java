@@ -9,7 +9,7 @@ import java.util.Date;
 public class CourseDTO {
     private Integer id;
     private Integer teachingId;
-    private String describe;
+    private String courseDescribe;
     private Integer price;
     private Integer studentCount;
     private Date gmtCreate;

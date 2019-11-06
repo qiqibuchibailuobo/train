@@ -24,6 +24,11 @@ public class SessionInterceptor implements HandlerInterceptor {
    private TeacherMapper teacherMapper;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("URL:"+request.getRequestURL());
+        if(request.getSession().getAttribute("user")==null){
+            response.sendRedirect("/");
+//            return false;
+        }
 //        Cookie[] cookies = request.getCookies();
 //        if(cookies != null&&cookies.length != 0){
 //            for (Cookie cookie:cookies){

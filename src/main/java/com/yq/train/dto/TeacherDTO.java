@@ -10,7 +10,7 @@ public class TeacherDTO {
     private String userPwd;
     private String teacherName;
     private Integer tel;
-    private String describe;
+    private String teacherDescribe;
     private Date gmtCreate;
     private Date gmtModified;
     private Integer courseTotal;

@@ -20,7 +20,7 @@
     select count(*)  from course
     <where>
       <if test="search != null">
-        and `describe` regexp #{search}
+        and course_describe regexp #{search}
       </if>
     </where>
   </select>
@@ -28,7 +28,7 @@
     select * from course
     <where>
       <if test="search != null">
-        and `describe` regexp #{search}
+        and course_describe regexp #{search}
       </if>
     </where>
     order by gmt_create desc limit #{page},#{size}

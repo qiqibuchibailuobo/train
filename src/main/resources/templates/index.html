@@ -15,6 +15,7 @@
     <script src="js/vue.min.js" type="application/javascript"></script>
 
 </head>
+
 <body>
 <div th:insert="~{navigation :: nav}"></div>
 <div class="container-fluid main">
@@ -54,7 +55,7 @@
                     <dt>
                         <img class="courseImage" th:src="${course.headportraitUrl}">
                     </dt>
-                    <dd ><a class="indexCourseName" th:text="${course.describe}" th:href="${course.describe}"></a></dd>
+                    <dd ><a class="indexCourseName" th:text="${course.courseDescribe}" th:href="${course.courseDescribe}"></a></dd>
                     <dd class="indexTeacherName"  th:text="${course.teacher.teacherName}"></dd>
                 </dl>
 
