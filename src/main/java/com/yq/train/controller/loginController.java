@@ -1,5 +1,6 @@
 package com.yq.train.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yq.train.dto.UserDTO;
 import com.yq.train.mapper.AdminMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +34,8 @@ public class loginController {
 
 
 
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
+//    @RequestMapping(value = "/login",method = RequestMethod.POST)
+    @PostMapping("/login")
     @ResponseBody
     public Object post(@RequestBody UserDTO userDTO,
                        HttpServletRequest request,
@@ -67,6 +70,7 @@ public class loginController {
                 userDTO.setType(0);
                 request.getSession()
                         .setAttribute("user",admin);
+                //String json= JSON.toJSONString(userDTO);//关键
                 return userDTO;
             }
             if(students.size()>0){
@@ -81,17 +85,27 @@ public class loginController {
             }
 
             if(admins.size()<=0&&students.size()<=0&&teachers.size()<=0){
-                session.setAttribute("error","账号或密码错误");
-
+               // session.setAttribute("error","账号或密码错误");
+                return null;
             }
         }
 
 
 
-        return userDTO;
+        return null;
     }
-@GetMapping("/student")
-    public String loginStudent(){
-        return "student";
-}
+    @GetMapping("/student")
+        public String loginStudent(){
+            return "student";
+    }
+    @GetMapping("/admin")
+    public String loginAdmin(){
+
+        return "admin";
+    }
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request){
+        request.getSession().removeAttribute("user");
+        return "redirect:/";
+    }
 }

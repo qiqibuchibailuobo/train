@@ -123,7 +123,7 @@
                     <button type="button" class="btn btn-default"
                             data-dismiss="modal">关闭
                     </button>
-                        <button  class="btn btn-primary login-button"  style="width:70px;height:40px;" onclick="post()" >登录</button>
+                        <button type="button" class="btn btn-primary "  style="width:70px;height:40px;" onclick="post(event)" >登录</button>
 
                     </div>
                 </div><!-- /.modal-content -->
@@ -146,7 +146,7 @@
             }
 
 
-            function post() {
+            function post(event) {
                 var username = $("#username").val();
                 var password = $("#password").val();
                 // console.log(questionId);
@@ -160,12 +160,20 @@
                         "password": password
                     }),
                     success: function (data) {
-                        console.log(data);
-                        console.log(data.msg);
+                        // console.log(data);
+                        // console.log(data.msg);
+                        if(data.type == 0){
+                            //alert(data.msg);
+                            window.location.href="/admin";
+                        }
                         //window.location.href="/student";
                     },
-                    dataType: "json"
+                    error: function(err) {
+                        console.log(err);
+                    },
                 });
+                event.preventDefault();
+                return true;
             }
         </script>
     </div>
