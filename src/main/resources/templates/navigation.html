@@ -166,7 +166,12 @@
                             //alert(data.msg);
                             window.location.href="/admin";
                         }
-                        //window.location.href="/student";
+                        if(data.type == 1){
+                            window.location.href="/student";
+                        }
+                        if(data.type == 2){
+                            window.location.href="/teacher";
+                        }
                     },
                     error: function(err) {
                         console.log(err);
