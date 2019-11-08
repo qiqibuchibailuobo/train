@@ -8,4 +8,6 @@ public class UserDTO {
     private String password;
     private int type;
     private String msg;
+    private boolean verificationCode;
+    private String verifyInput;
 }

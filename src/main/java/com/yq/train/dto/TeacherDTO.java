@@ -8,7 +8,7 @@ public class TeacherDTO {
     private Integer id;
     private String userName;
     private String userPwd;
-    private String teacherName;
+    private String iName;
     private Integer tel;
     private String teacherDescribe;
     private Date gmtCreate;

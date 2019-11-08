@@ -9,7 +9,7 @@ public class StudentDTO {
     private Integer id;
     private String userName;
     private String userPwd;
-    private String studentName;
+    private String iName;
     private Integer tel;
     private Integer addTeacher;
     private Date gmtCreate;
