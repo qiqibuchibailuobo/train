@@ -3,6 +3,8 @@ package com.yq.train.service;
 import com.yq.train.dto.CourseDTO;
 import com.yq.train.dto.CourseQueryDTO;
 import com.yq.train.dto.PaginationDTO;
+import com.yq.train.exception.CustomizeErrorCode;
+import com.yq.train.exception.CustomizeException;
 import com.yq.train.mapper.CourseExtMapper;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.TeacherMapper;
@@ -90,5 +92,18 @@ public class CourseService {
         }
         paginationDTO.setData(courseDTOList);
         return paginationDTO;
+    }
+
+    public CourseDTO getById(int id) {
+        Course course = courseMapper.selectByPrimaryKey(id);
+        if (course == null){
+            throw new CustomizeException(CustomizeErrorCode.COURSE_NOT_FOUND);
+        }
+        CourseDTO courseDTO = new CourseDTO();
+        BeanUtils.copyProperties(course,courseDTO);
+        Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
+        courseDTO.setTeacher(teacher);
+
+        return courseDTO;
     }
 }

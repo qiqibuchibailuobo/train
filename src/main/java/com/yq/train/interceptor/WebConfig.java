@@ -2,6 +2,7 @@ package com.yq.train.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -24,7 +25,13 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login",
                         "/getVerify",
                         "/register",
-                        "/studentRegister"
+                        "/studentRegister",
+                        "/course",
+                        "/course/css/**",
+                        "/course/js/**",
+                        "/course/images/**",
+                        "/course/fonts/**",
+                        "/error"
                 );
     }
 
@@ -34,8 +41,8 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
 
     }
 }

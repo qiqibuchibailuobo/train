@@ -52,10 +52,10 @@
             <hr>
             <div th:each="course:${pagination.data}" style="float:left;margin-right: 25px">
                 <dl >
-                    <dt>
-                        <img class="courseImage" th:src="${course.headportraitUrl}">
+                    <dt >
+                        <img th:href="@{'/course/'+${course.id}}" class="courseImage" th:src="${course.headportraitUrl}">
                     </dt>
-                    <dd ><a class="indexCourseName" th:text="${course.courseDescribe}" th:href="${course.courseDescribe}"></a></dd>
+                    <dd ><a th:href="@{'/course/'+${course.id}}"  class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
                     <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
                 </dl>
 

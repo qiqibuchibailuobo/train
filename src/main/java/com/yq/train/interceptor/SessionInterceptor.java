@@ -1,5 +1,7 @@
 package com.yq.train.interceptor;
 
+import com.yq.train.exception.CustomizeErrorCode;
+import com.yq.train.exception.CustomizeException;
 import com.yq.train.mapper.AdminMapper;
 import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
@@ -24,13 +26,15 @@ public class SessionInterceptor implements HandlerInterceptor {
    private TeacherMapper teacherMapper;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //System.out.println("URL:"+request.getRequestURL());
+        System.out.println("URL:"+request.getRequestURL());
 
         if(request.getSession().getAttribute("user")==null){
-            response.sendRedirect("/");
-        }
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+            //response.sendRedirect("/");
 
-        return true;
+        }else
+            return true;
+
     }
 
     @Override

@@ -14,7 +14,69 @@
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>课程</h2>
+            <nav aria-label="Page navigation" style="display:inline-block;margin-left: 75%">
+                <ul class="pagination" style="margin-bottom: -10px">
+                    <li th:if="${pagination.showFirstPage}">
+                        <a  th:href="@{/(page=1,search=${search})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showPrevious}">
+                        <a th:href="@{/(page=${pagination.page - 1},search=${search})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page:${pagination.pages}" th:class="${pagination.page == page}? 'active' : ' '"><a
+                            th:href="@{/(page=${page},search=${search})}" th:text="${page}"></a></li>
+                    <li th:if="${pagination.showNext}">
+                        <a th:href="@{/(page=${pagination.page + 1},search=${search})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showEndPage}">
+                        <a th:href="@{/(page=${pagination.totalPage},search=${search})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
+            <hr>
+            <div th:each="course:${pagination.data}" style="float:left;margin-right: 25px">
+                <dl >
+                    <dt >
+                        <img th:href="@{'/course/'+${course.id}}" class="courseImage" th:src="${course.headportraitUrl}">
+                    </dt>
+                    <dd ><a th:href="@{'/course/'+${course.id}}" class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
+                    <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
+                </dl>
+
+                <div style="clear:both;"></div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <h3>nmsl</h3>
+            <h4>·wdnmd <br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+            <h4>·wdnmd<br></h4>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

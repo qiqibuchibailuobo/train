@@ -2,11 +2,13 @@ package com.yq.train.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yq.train.dto.PaginationDTO;
 import com.yq.train.dto.UserDTO;
 import com.yq.train.mapper.AdminMapper;
 import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
+import com.yq.train.service.CourseService;
 import com.yq.train.tool.RandomValidateCodeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class loginController {
     private TeacherMapper teacherMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private CourseService courseService;
 //    private final static Logger logger = LoggerFactory.getLogger(Picverifyaction.class);
 
 
@@ -87,6 +91,8 @@ public class loginController {
                 userDTO.setType(1);
                 request.getSession()
                         .setAttribute("user",student);
+                String random = (String) request.getSession().getAttribute("RANDOMVALIDATECODEKEY");
+                userDTO.setVerificationCode(chek(userDTO.getVerifyInput(),random));
                 return userDTO;
             }
             if(teachers.size()>0){
@@ -95,6 +101,8 @@ public class loginController {
                 userDTO.setType(2);
                 request.getSession()
                         .setAttribute("user",teacher);
+                String random = (String) request.getSession().getAttribute("RANDOMVALIDATECODEKEY");
+                userDTO.setVerificationCode(chek(userDTO.getVerifyInput(),random));
                 return userDTO;
             }
 
@@ -104,6 +112,7 @@ public class loginController {
                 userDTO.setType(3);
                 return userDTO;
             }
+
         }
 
         return null;
@@ -149,8 +158,16 @@ public class loginController {
             return "student";
     }
     @GetMapping("/admin")
-    public String loginAdmin(){
-
+    public String loginAdmin(Model model,
+            @RequestParam(name = "page",defaultValue = "1") Integer page,
+            @RequestParam(name = "size",defaultValue = "6") Integer size ,
+            @RequestParam(name = "search",required = false) String  search){
+        if(search == ""){
+            search = null;
+        }
+        PaginationDTO pagination = courseService.list(search,page,size);
+        model.addAttribute("pagination",pagination);
+        model.addAttribute("search",search);
         return "admin";
     }
     @GetMapping("/logout")
@@ -158,4 +175,6 @@ public class loginController {
         request.getSession().removeAttribute("user");
         return "redirect:/";
     }
+
+
 }

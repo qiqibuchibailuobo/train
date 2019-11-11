@@ -1,10 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>注册</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="css/community.css"/>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.js" type="application/javascript"></script>
+    <script src="js/vue.min.js" type="application/javascript"></script>
 </head>
 <body>
+<div class="container1">
 
+    <div class="form-horizontal">
+        <div class="form-group">
+            <!--<h2 class="form-signin-heading">注册</h2>-->
+            <!-- class="sr-only"将label标签隐藏 -->
+            <label for="userName" class="col-sm-2 control-label inline-style font-position-right">姓名</label>
+            <div class="col-sm-9 inline-style ">
+                <input type="text"  class="form-control" id="iName" onblur='isChn()' placeholder="姓名">
+            </div>
+
+
+        </div>
+        <span id="chekName"  class="error form-group"> </span>
+        <div class="form-group">
+            <!--<h2 class="form-signin-heading">注册</h2>-->
+            <!-- class="sr-only"将label标签隐藏 -->
+            <label for="userName" class="col-sm-2 control-label inline-style font-position-right">用户名</label>
+            <div class="col-sm-9 inline-style ">
+                <input type="text" class="form-control" id="userName" onblur='checkUsername()'  placeholder="用户名">
+            </div>
+
+
+        </div>
+        <span id="chekUserName"  class="error form-group"> </span>
+        <div class="form-group">
+            <!--<h2 class="form-signin-heading">注册</h2>-->
+            <label for="userName" class="col-sm-2 control-label  inline-style font-position-right">密码</label>
+
+            <div class="col-sm-9  inline-style">
+                <input type="password" class="form-control" id="userPwd" onblur='checkPassword()'  placeholder="密码">
+            </div>
+
+        </div>
+        <span id="chekPwd"  class="error form-group"> </span>
+        <div class="form-group">
+            <!--<h2 class="form-signin-heading">注册</h2>-->
+            <label for="userName" class="col-sm-2 control-label  inline-style font-position-right">确认密码</label>
+
+            <div class="col-sm-9  inline-style">
+                <input type="password" class="form-control" id="userPwd2" onblur='checkPassword2()'  placeholder="确认密码">
+            </div>
+
+        </div>
+        <span id="chekPwd2"  class="error form-group"> </span>
+        <div class="form-group">
+            <label for="userName" class="col-sm-2 control-label   inline-style font-position-right" >手机</label>
+
+            <div class="col-sm-9  inline-style">
+                <input type="tel" class="form-control" id="tel" onblur='checkPhoneNumber()' placeholder="手机">
+            </div>
+
+        </div>
+        <span id="chekTel"  class="error form-group"> </span>
+        <div class="form-group">
+            <div >
+                <div >
+                    <label for="userName" class="col-sm-2 control-label  inline-style font-position-right">验证码</label>
+                    <div class="col-sm-9  inline-style">
+                        <input  type="tel" class="form-control" id="verifyInput" placeholder="请输入验证码" maxlength="4">
+
+                    </div>
+                </div>
+            </div>
+            <div >
+                <a style="margin-left: 133px" href="javascript:void(0);" title="点击更换验证码">
+                    <img  id="imgVerify" src="/getVerify" alt="更换验证码" height="36" width="170" onclick="getVerify(this);">
+                </a>
+            </div>
+            <!--<input type="button" onclick="aVerify()" value="提交">-->
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-lg btn-primary btn-block register-btn" onclick="register()" type="submit">注册</button>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-lg btn-primary btn-block register-btn" onclick="out()" type="submit">返回主页面</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" language = "javascript">
+    function out() {
+        window.location.href="/";
+
+    }
+    //获取验证码
+    function getVerify() {
+        // $("#imgCode").on("click", function() {
+        $("#imgVerify").attr("src", 'getVerify?' + Math.random());//jquery方式
+        // });
+    }
+    function register() {
+        var iname = $("#iName").val();
+        var userName = $("#userName").val();
+        var userPwd = $("#userPwd").val();
+        var userPwd2 = $("#userPwd2").val();
+        var tel = $("#tel").val();
+        var verifyInput = $("#verifyInput").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/studentRegister",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "iname":iname,
+                    "userName": userName,
+                    "userPwd": userPwd,
+                    "userPwd2": userPwd2,
+                    "tel":tel,
+                    "verifyInput":verifyInput
+                }),
+                success: function (data) {
+                    if(data.type == 1){
+                        if(data.verificationCode){
+                            window.location.href="/";
+                        }else {
+                            alert("验证码错误!");
+                        }
+                    }
+                    if(data.type == 2){
+                        alert("两次密码不一致！");
+                    }
+                    if(data.type == 0){
+                        alert("账号已经存在");
+                    }
+
+                    getVerify();
+
+                }
+            });
+
+
+
+    }
+    function bool() {
+        var iname = $("#iName").val();
+        var userName = $("#userName").val();
+        var userPwd = $("#userPwd").val();
+        var userPwd2 = $("#userPwd2").val();
+        var tel = $("#tel").val();
+        var verifyInput = $("#verifyInput").val();
+        if(!isChn(iname)){
+            return false;
+        }
+        if(!checkPassword(userPwd)){
+            return false;
+        }
+        if(!checkPassword2(userPwd,userPwd2)){
+            return false;
+        }
+        if(!checkUsername(userName)){
+            return false;
+        }
+        if(!checkPhoneNumber(tel)){
+            return false;
+        }
+            return true;
+    }
+    function isChn(){
+        document.getElementById("chekName").innerHTML ="";
+        var reg = /^[\u4E00-\u9FA5]+$/;
+        var iname = $("#iName").val();
+        if(!reg.test(iname)){
+            document.getElementById("chekName").innerHTML = "请输入正确姓名";
+           //alert("请输入正确姓名");
+        }
+    }
+
+
+    function checkUsername()
+    {
+        //只简单的判断用户名的长度
+        var userName = $("#userName").val();
+        document.getElementById("chekUserName").innerHTML ="";
+        if(userName.length > 10)
+        {
+            //alert("输入的用户名过长");
+           document.getElementById("chekUserName").innerHTML = "输入的用户名过长";
+
+        }if(userName.length <= 4){
+            //alert("请输入大于4位小于10位的用户名");
+            document.getElementById("chekUserName").innerHTML = "请输入大于4位小于10位的用户名";
+
+         }
+    }
+    function checkPassword()
+    {
+        var userPwd = $("#userPwd").val();
+        document.getElementById("chekPwd").innerHTML ="";
+        if(userPwd.length > 10)
+        {
+            //alert("输入的用户名过长");
+            document.getElementById("chekPwd").innerHTML = "输入的用户名过长";
+
+        }if(userPwd.length <= 4){
+        //alert("请输入大于4位小于10位的密码");
+        document.getElementById("chekPwd").innerHTML = "请输入大于4位小于10位的密码";
+
+    }
+    }
+    function checkPassword2()
+    {
+
+        var userPwd = $("#userPwd").val();
+        var userPwd2 = $("#userPwd2").val();
+        document.getElementById("chekPwd2").innerHTML ="";
+        if(userPwd != ""){
+            if(userPwd!=userPwd2)
+            {
+                //alert("密码不一致");
+                document.getElementById("chekPwd2").innerHTML="密码不一致";
+
+            }
+        }else  document.getElementById("chekPwd2").innerHTML="密码为空";
+
+    }
+
+    function checkPhoneNumber()
+    {
+        var tel = $("#tel").val();
+        document.getElementById("chekTel").innerHTML ="";
+
+        var expr =  /\D/i;
+        if(expr.test(tel))
+        {
+            // alert("不能输入非数字字符");
+           document.getElementById("chekTel").innerHTML="不能输入非数字字符";
+
+        }
+
+    }
+
+
+</script>
 </body>
+
 </html>
