@@ -1,7 +1,9 @@
 package com.yq.train.controller;
 
 import com.yq.train.dto.StudentDTO;
+import com.yq.train.mapper.ClassInfoMapper;
 import com.yq.train.mapper.StudentMapper;
+import com.yq.train.model.ClassInfo;
 import com.yq.train.model.Student;
 import com.yq.train.model.StudentExample;
 import com.yq.train.tool.RandomValidateCodeUtil;
@@ -21,7 +23,8 @@ import java.util.List;
 public class registerController {
     @Autowired
     private StudentMapper studentMapper;
-
+    @Autowired
+    private ClassInfoMapper classInfoMapper;
     @GetMapping("/register")
     public String register(){
 
@@ -50,7 +53,12 @@ public class registerController {
             studentDTO.setMsg("两次密码不一致！");
             studentDTO.setType(2);
             return studentDTO;
-        } else {
+        }else if(!checkname(studentDTO.getIname())) {
+            studentDTO.setType(3);
+            return studentDTO;
+        }
+
+        else {
             student.setiName(studentDTO.getIname());
             student.setUserName(studentDTO.getUserName());
             student.setUserPwd(studentDTO.getUserPwd());
@@ -59,13 +67,25 @@ public class registerController {
             Date date = new Date();
             student.setGmtCreate(date);
             student.setGmtModified(date);
-            student.setHeadportraitUrl("images/nice.jpg");
+            student.setHeadportraitUrl("D:/MyGitHub/images/nice.jpg");
+            ClassInfo classInfo = new ClassInfo();
 
+            classInfo.setCourseId(0);
+            classInfo.setRemnantCourse(0);
+            classInfo.setStatus(0);
+            classInfo.setStudentId(student.getId());
+            classInfo.setTeacherId(0);
             studentDTO.setType(1);
             studentDTO.setMsg("注册成功！");
             String random = (String) request.getSession().getAttribute("RANDOMVALIDATECODEKEY");
             if(chek(studentDTO.getVerifyInput(),random)){
                 studentMapper.insert(student);
+                studentExample.createCriteria()
+                        .andUserNameEqualTo(studentDTO.getUserName());
+                List<Student> allstudents = studentMapper.selectByExample(studentExample);
+                Student student1 = allstudents.get(0);
+                classInfo.setStudentId(student1.getId());
+                classInfoMapper.insert(classInfo);
             }
             studentDTO.setVerificationCode(chek(studentDTO.getVerifyInput(),random));
 
@@ -89,5 +109,15 @@ public class registerController {
         }
 
     }
-
+    public boolean checkname(String name)
+    {
+        int n = 0;
+        for(int i = 0; i < name.length(); i++) {
+            n = (int)name.charAt(i);
+            if(!(19968 <= n && n <40869)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -53,7 +53,9 @@
             <div th:each="course:${pagination.data}" style="float:left;margin-right: 25px">
                 <dl >
                     <dt >
-                        <img th:href="@{'/course/'+${course.id}}" class="courseImage" th:src="${course.headportraitUrl}">
+                        <a th:href="@{'/course/'+${course.id}}">
+                            <img  class="courseImage" th:src="${course.headportraitUrl}">
+                        </a>
                     </dt>
                     <dd ><a th:href="@{'/course/'+${course.id}}"  class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
                     <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
