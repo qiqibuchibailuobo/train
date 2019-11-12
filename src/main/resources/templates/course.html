@@ -15,6 +15,19 @@
     <!--<script src="js/vue.min.js" type="application/javascript"></script>-->
 </head>
 <body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">培训管理系统</span>
+            </button>
+            <a class="navbar-brand" href="/">培训管理系统</a>
+        </div>
+
+    </div>
+</nav>
+
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
@@ -22,24 +35,32 @@
             <hr>
             <p><img th:src="@{'/static/'+${course.headportraitUrl}}" style="width: 500px"></p>
 
-            教师：<p th:text="${course.teacher.iName}"></p>
-            价格：<p th:text="${course.price}"></p>
-            学生人数：<p th:text="${course.studentCount}"></p>
+            <div style="font-size: 39px;display: flex;margin-bottom: 40px">
+                <div style="margin-right: 40px">
+                    教师：<span  th:text="${course.teacher.iName}"></span>
+                </div>
+                <div style="margin-right: 40px">
+                    价格：<span  th:text="${course.price}"></span>
+                </div>
+                <div style="margin-right: 40px">
+                    学生人数： <span  th:text="${course.studentCount}"></span>
+                </div>
+            </div>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h3>nmsl</h3>
-            <h4>·wdnmd <br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
-            <h4>·wdnmd<br></h4>
+            <h3>好好学习</h3>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
         </div>
     </div>
 </div>

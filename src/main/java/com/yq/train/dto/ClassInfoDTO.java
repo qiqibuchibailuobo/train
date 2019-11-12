@@ -1,13 +1,15 @@
 package com.yq.train.dto;
 
+import com.yq.train.model.ClassInfo;
 import lombok.Data;
 
 @Data
 public class ClassInfoDTO {
-    private Integer studentId;
-    private Integer teacherId;
-    private Integer courseId;
+    private String studentName;
+    private String teacherName;
+    private String courseName;
     private Integer remnantCourse;
     private String classTime;
-    private Integer status;
+    private String status;
+
 }

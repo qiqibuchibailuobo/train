@@ -153,10 +153,7 @@ public class loginController {
     public String loginTeacher(){
         return "teacher";
     }
-    @GetMapping("/student")
-        public String loginStudent(){
-            return "student";
-    }
+
     @GetMapping("/admin")
     public String loginAdmin(Model model,
             @RequestParam(name = "page",defaultValue = "1") Integer page,

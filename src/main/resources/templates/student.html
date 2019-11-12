@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${classInfoDTO.studentName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
@@ -79,67 +79,59 @@
     </a>
 </div>
 
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>课程</h2>
 
 
-<script type="text/javascript">
+            <hr>
+            <div style="display: flex;font-size: 29px">
+                <div style="margin-right: 40px">
+                    <label>学生姓名</label>
+                    <p th:text="${classInfoDTO.studentName}"></p>
+                </div>
+                <div style="margin-right: 40px">
+                    <label>教师姓名</label>
+                    <p th:text="${classInfoDTO.teacherName}"></p>
+                </div>
+                <div style="margin-right: 40px">
+                    <label>课程名称</label>
+                    <p th:text="${classInfoDTO.courseName}"></p>
+                </div>
+                <div style="margin-right: 40px">
+                    <label>上课时间</label>
+                    <p th:text="${classInfoDTO.classTime}"></p>
+                </div>
+                <div style="margin-right: 40px">
+                    <label>剩余课时</label>
+                    <p th:text="${classInfoDTO.remnantCourse}"></p>
+                </div>
+                <div style="margin-right: 40px">
+                    <label>预约状态</label>
+                    <p th:text="${classInfoDTO.status}"></p>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <h3>好好学习</h3>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+        </div>
+    </div>
+</div>
 
 
-    //获取验证码
-    function getVerify() {
-        // $("#imgCode").on("click", function() {
-        $("#imgVerify").attr("src", 'getVerify?' + Math.random());//jquery方式
-        // });
-    }
-
-    function post(event) {
-        var username = $("#username").val();
-        var password = $("#password").val();
-        var verifyInput = $("#verifyInput").val();
-        $.ajax({
-            type: "POST",
-            url: "/login",
-            contentType: "application/json",
-            data: JSON.stringify({
-                "username": username,
-                "password": password,
-                "verifyInput":verifyInput
-            }),
-            success: function (data) {
-                if(data.type<=2&&data.type>=0){
-                    if(data.verificationCode){
-                        if(data.type == 0){
-                            //alert(data.msg);
-                            window.location.href="/admin";
-                        }
-                        if(data.type == 1){
-                            window.location.href="/student";
-                        }
-                        if(data.type == 2){
-                            window.location.href="/teacher";
-                        }
-
-                    }else {
-                        alert("验证码错误!");
-                    }
-                }
-                if(data.type == 3){
-                    if(data.username == "" || data.password == ""){
-                        alert("账号或密码为空")
-                    }else {
-                        alert(data.msg);
-                    }
-                }
-
-                getVerify();
-
-            },
-            error: function(err) {
-                console.log(err);
-            },
-        });
-        event.preventDefault();
-        return true;
-    }
-</script>
 </body>
 </html>
