@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="css/bootstrap.css"/>
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="css/community.css"/>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.js" type="application/javascript"></script>
-    <script src="js/vue.min.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+    <script src="/js/vue.min.js" type="application/javascript"></script>
 </head>
 <body>
 <div >
@@ -25,35 +25,32 @@
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <form class="navbar-form navbar-left" action="/" method="get">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="search"  placeholder="搜尼玛呢">
-                    </div>
-                    <button type="submit" class="btn btn-default">搜索</button>
-                </form>
+
                 <ul class="nav navbar-nav navbar-right">
                     <!--<li><a href="/profile/replies">通知  <span class="badge" th:text="${session.unreadCount}"></span></a></li>-->
 
                     <li class="dropdown" th:if="${session.user != null}">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
-                            <img  src="unit/bill/showeinvoice2" style="width: 30px">
+                        <a href="/" class="dropdown-toggle" data-toggle="dropdown" id="dropdownMenu1" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            <img th:src="@{'http://localhost:8080/test/'+${session.user.headportraitUrl}}" style="width: 30px">
                             <span th:text="${session.user.iName}"></span>
                             <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/profile/questions">修改信息</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a data-toggle="modal" data-target="#updateInfoImage">更换头像</a></li>
+                            <li><a data-toggle="modal" data-target="#updateInfo">修改信息</a></li>
+                            <li><a data-toggle="modal" data-target="#updateInfoPwd">修改密码</a></li>
+
                             <li><a href="/logout">退出登录</a></li>
                         </ul>
                     </li>
-                    <li th:if="${session.user == null}">
-                        <button class="btn  btn-lg" data-toggle="modal" data-target="#myModal" style="background-color: white;color: #777777">
-                            登录
-                        </button>
-                    </li>
+
                 </ul>
             </div>
         </div>
     </nav>
+
+
 
     <div id="myCarousel" class="carousel slide WheelPlanting" data-ride="carousel" data-interval="2000">
         <!-- 轮播（Carousel）指标 -->
@@ -65,13 +62,13 @@
         <!-- 轮播（Carousel）项目 -->
         <div class="carousel-inner">
             <div class="item active">
-                <img src="images/chuxinshiming.jpg" alt="First slide">
+                <img src="/images/chuxinshiming.jpg" alt="First slide">
             </div>
             <div class="item">
-                <img src="images/shuangjiang.jpg" alt="Second slide">
+                <img src="/images/shuangjiang.jpg" alt="Second slide">
             </div>
             <div class="item">
-                <img src="images/wohewodezuguowenyiwanhui.jpg" alt="Third slide">
+                <img src="/images/wohewodezuguowenyiwanhui.jpg" alt="Third slide">
             </div>
         </div>
         <!-- 轮播（Carousel）导航 -->
@@ -84,7 +81,73 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
+    <div class="container-fluid main">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>我的课程</h2>
+                <nav aria-label="Page navigation" style="display:inline-block;margin-left: 75%">
+                    <ul class="pagination" style="margin-bottom: -10px">
+                        <li th:if="${pagination1.showFirstPage}">
+                            <a  th:href="@{/teacher/(page1=1,search1=${search1})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;&lt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagination1.showPrevious}">
+                            <a th:href="@{/teacher/(page1=${pagination1.page - 1},search1=${search1})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
 
+                        <li th:each="page1:${pagination1.pages}" th:class="${pagination1.page == page1}? 'active' : ' '"><a
+                                th:href="@{/teacher/(page1=${page1},search1=${search1})}" th:text="${page1}"></a></li>
+
+                        <li th:if="${pagination1.showNext}">
+                            <a th:href="@{/teacher/(page1=${pagination1.page + 1},search1=${search1})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagination1.showEndPage}">
+                            <a th:href="@{/teacher/(page1=${pagination1.totalPage},search1=${search1})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;&gt;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <hr>
+                <div th:each="course:${pagination1.data}" style="float:left;margin-right: 25px">
+                    <dl >
+                        <dt >
+                            <a th:href="@{'/course/'+${course.id}}">
+                                <img  class="courseImage" th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}">
+                            </a>
+                        </dt>
+                        <dd ><a th:href="@{'/course/'+${course.id}}"  class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
+                        <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
+                    </dl>
+
+                    <div style="clear:both;"></div>
+                </div>
+
+
+            </div>
+            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                <h3>好好学习</h3>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+            </div>
+        </div>
+    </div>
     <!-- 模态框（Modal） -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog"  style="width: 400px">

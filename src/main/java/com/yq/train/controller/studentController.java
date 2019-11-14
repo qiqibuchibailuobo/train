@@ -112,7 +112,7 @@ public class studentController {
         //把本地文件上传到封装上传文件位置的全路径
         file.transferTo(targetFile);
         //productModel.setImage(newFileName);
-        student.setHeadportraitUrl("D:/MyGitHub/images/"+newFileName);
+        student.setHeadportraitUrl(newFileName);
         Date date = new Date();
         student.setGmtModified(date);
         StudentExample studentExample = new StudentExample();

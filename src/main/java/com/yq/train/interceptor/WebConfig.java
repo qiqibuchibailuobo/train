@@ -31,7 +31,16 @@ public class WebConfig implements WebMvcConfigurer {
                         "/course/js/**",
                         "/course/images/**",
                         "/course/fonts/**",
-                        "/error"
+                        "/error",
+                        "/teacher/css/**",
+                        "/teacher/js/**",
+                        "/teacher/images/**",
+                        "/teacher/fonts/**",
+                        "/teacher/**",
+                        "/teacher/unit/bill/showeinvice2",
+                        "/unit/bill/showeinvice2",
+                        "/static/**",
+                        "/admin/**"
                 );
     }
 

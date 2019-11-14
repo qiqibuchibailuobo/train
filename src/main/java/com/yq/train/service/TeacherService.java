@@ -3,45 +3,40 @@ package com.yq.train.service;
 import com.yq.train.dto.CourseDTO;
 import com.yq.train.dto.CourseQueryDTO;
 import com.yq.train.dto.PaginationDTO;
-import com.yq.train.exception.CustomizeErrorCode;
-import com.yq.train.exception.CustomizeException;
+import com.yq.train.dto.TeacherCourseDTO;
 import com.yq.train.mapper.CourseExtMapper;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.Course;
 import com.yq.train.model.CourseExample;
-import com.yq.train.model.Student;
 import com.yq.train.model.Teacher;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Collectors;
 
 @Service
-public class CourseService {
+public class TeacherService {
     @Autowired
     private TeacherMapper teacherMapper;
     @Autowired
     private CourseExtMapper courseExtMapper;
     @Autowired
     private CourseMapper courseMapper;
+
     /**
-     * 主页返回所有课程
+     * 返回教师所有课程
+     * @param search
      * @param page
      * @param size
      * @return
      */
-    public PaginationDTO list(String search, Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size,Integer teachingId) {
 
         if(StringUtils.isNotBlank(search)){
             String [] tags = StringUtils.split(search," ");
@@ -54,12 +49,14 @@ public class CourseService {
         Integer totalPage;
 
         //QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
-        CourseQueryDTO courseQueryDTO = new CourseQueryDTO();
-
-        courseQueryDTO.setSearch(search);
+        //CourseQueryDTO courseQueryDTO = new CourseQueryDTO();
+        TeacherCourseDTO teacherCourseDTO = new TeacherCourseDTO();
+        teacherCourseDTO.setSearch(search);
+        teacherCourseDTO.setTeachingId(teachingId);
+        //courseQueryDTO.setSearch(search);
         //Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
-        Integer totalCount = courseExtMapper.countBySearch(courseQueryDTO);
+        Integer totalCount = courseExtMapper.teacherCourseCountBySearch(teacherCourseDTO);
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -79,37 +76,25 @@ public class CourseService {
         //List<Question> questions = questionMapper.list(offset,size);
         CourseExample courseExample = new CourseExample();
         courseExample.setOrderByClause("gmt_create desc");
-        courseQueryDTO.setSize(size);
+        teacherCourseDTO.setSize(size);
+        teacherCourseDTO.setPage(offset);
+        //courseQueryDTO.setSize(size);
 
-        courseQueryDTO.setPage(offset);
-        List<Course> courses = courseExtMapper.selectBySearch(courseQueryDTO);
+        //courseQueryDTO.setPage(offset);
+        List<Course> courses = courseExtMapper.selectByTeacherCourseSearch(teacherCourseDTO);
 
         List<CourseDTO> courseDTOList = new ArrayList<>();
 
         for (Course course : courses) {
-         //   System.out.println(course.getTeachingId());
+            //   System.out.println(course.getTeachingId());
 
             Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
             CourseDTO courseDTO = new CourseDTO();
             BeanUtils.copyProperties(course,courseDTO);
-
             courseDTO.setTeacher(teacher);
             courseDTOList.add(courseDTO);
         }
         paginationDTO.setData(courseDTOList);
         return paginationDTO;
-    }
-
-    public CourseDTO getById(int id) {
-        Course course = courseMapper.selectByPrimaryKey(id);
-        if (course == null){
-            throw new CustomizeException(CustomizeErrorCode.COURSE_NOT_FOUND);
-        }
-        CourseDTO courseDTO = new CourseDTO();
-        BeanUtils.copyProperties(course,courseDTO);
-        Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
-        courseDTO.setTeacher(teacher);
-
-        return courseDTO;
     }
 }

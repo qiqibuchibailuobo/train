@@ -15,5 +15,6 @@ public class CourseDTO {
     private Date gmtCreate;
     private Date gmtModified;
     private String headportraitUrl;
+    private String classTime;
     private Teacher teacher;
 }

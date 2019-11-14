@@ -33,4 +33,26 @@
     </where>
     order by gmt_create desc limit #{page},#{size}
   </select>
+
+  <select id="teacherCourseCountBySearch" parameterType="com.yq.train.dto.TeacherCourseDTO" resultType="java.lang.Integer">
+    select count(*)  from course
+    <where>
+      <if test="search != null">
+        and course_describe regexp #{search}
+      </if>
+      and teaching_id = #{teachingId}
+    </where>
+
+  </select>
+  <select id="selectByTeacherCourseSearch" parameterType="com.yq.train.dto.TeacherCourseDTO" resultMap="BaseResultMap">
+    select * from course
+    <where>
+      <if test="search != null">
+        and course_describe regexp #{search}
+      </if>
+      and teaching_id = #{teachingId}
+    </where>
+    order by gmt_create desc limit #{page},#{size}
+  </select>
+
 </mapper>

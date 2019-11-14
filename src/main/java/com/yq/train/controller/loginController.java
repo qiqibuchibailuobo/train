@@ -149,10 +149,7 @@ public class loginController {
             }
 
     }
-    @GetMapping("/teacher")
-    public String loginTeacher(){
-        return "teacher";
-    }
+
 
     @GetMapping("/admin")
     public String loginAdmin(Model model,

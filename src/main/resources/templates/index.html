@@ -54,7 +54,7 @@
                 <dl >
                     <dt >
                         <a th:href="@{'/course/'+${course.id}}">
-                            <img  class="courseImage" th:src="${course.headportraitUrl}">
+                            <img  class="courseImage" th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}">
                         </a>
                     </dt>
                     <dd ><a th:href="@{'/course/'+${course.id}}"  class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
