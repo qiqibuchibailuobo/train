@@ -33,32 +33,5 @@ public class indexController {
         model.addAttribute("search",search);
         return "index";
     }
-    @RequestMapping("unit/bill/showeinvoiceIndex")
-    @ResponseBody
-    public void showEInvoiceIndex(HttpServletRequest request,HttpServletResponse response){
-        FileInputStream fis = null;
-        OutputStream os = null;
-        Student student = (Student)request.getSession().getAttribute("user");
 
-        String filepath = student.getHeadportraitUrl();     //path是你服务器上图片的绝对路径
-        File file = new File(filepath);
-        if(file.exists()){
-            try {
-                fis = new FileInputStream(file);
-                long size = file.length();
-                byte[] temp = new byte[(int) size];
-                fis.read(temp, 0, (int) size);
-                fis.close();
-                byte[] data = temp;
-                response.setContentType("image/png");
-                os = response.getOutputStream();
-                os.write(data);
-                os.flush();
-                os.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

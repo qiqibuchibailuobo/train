@@ -97,7 +97,7 @@ public class loginController {
             }
             if(teachers.size()>0){
                 Teacher teacher = teachers.get(0);
-                userDTO.setMsg("学生登录成功");
+                userDTO.setMsg("教师登录成功");
                 userDTO.setType(2);
                 request.getSession()
                         .setAttribute("user",teacher);

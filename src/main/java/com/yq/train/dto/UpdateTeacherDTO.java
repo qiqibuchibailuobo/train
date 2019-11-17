@@ -3,9 +3,10 @@ package com.yq.train.dto;
 import lombok.Data;
 
 @Data
-public class UpdateStudentDTO {
+public class UpdateTeacherDTO {
     private String iname;
     private Integer tel;
+    private String teacherDescribe;
     private String userPwd;
     private String userPwd2;
     private String userPwd3;

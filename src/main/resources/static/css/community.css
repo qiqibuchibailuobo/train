@@ -9,7 +9,10 @@ body {
     margin: 30px;
 }
 .courseImage{
-    cursor: pointer;transition: all 0.6s;
+    cursor: pointer;
+    transition: all 0.6s;
+    width: 270px;
+    height: 162px;
 }
 .courseImage:hover{
     transform: scale(1.1);

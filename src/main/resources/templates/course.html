@@ -24,7 +24,26 @@
             </button>
             <a class="navbar-brand" href="/">培训管理系统</a>
         </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
+            <ul class="nav navbar-nav navbar-right">
+                <!--<li><a href="/profile/replies">通知  <span class="badge" th:text="${session.unreadCount}"></span></a></li>-->
+
+                <li class="dropdown" th:if="${session.user.userType != 1}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
+
+                        <span>课程信息操作</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="">修改信息</a></li>
+
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -49,9 +68,14 @@
                 <div style="margin-right: 40px">
                     上课时间： <span  th:text="${course.classTime}"></span>
                 </div>
+                <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
+                <a href="/student" th:if="${session.user.userType == 1}">返回学生页面</a>
+                <a href="/teacher" th:if="${session.user.userType == 2}">返回教师页面</a>
             </div>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+
+
             <h3>好好学习</h3>
             <h4>天天向上 <br></h4>
             <h4>天天向上<br></h4>

@@ -122,33 +122,33 @@ public class studentController {
 
         return "redirect:/student";
     }
-    @RequestMapping("unit/bill/showeinvoice")
-    @ResponseBody
-    public void showEInvoice(HttpServletRequest request,       HttpServletResponse response){
-        FileInputStream fis = null;
-        OutputStream os = null;
-        Student student = (Student)request.getSession().getAttribute("user");
-        String filepath = student.getHeadportraitUrl();     //path是你服务器上图片的绝对路径
-        File file = new File(filepath);
-        if(file.exists()){
-            try {
-                fis = new FileInputStream(file);
-                long size = file.length();
-                byte[] temp = new byte[(int) size];
-                fis.read(temp, 0, (int) size);
-                fis.close();
-                byte[] data = temp;
-                response.setContentType("image/png");
-                os = response.getOutputStream();
-                os.write(data);
-                os.flush();
-                os.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    @RequestMapping("unit/bill/showeinvoice")
+//    @ResponseBody
+//    public void showEInvoice(HttpServletRequest request,       HttpServletResponse response){
+//        FileInputStream fis = null;
+//        OutputStream os = null;
+//        Student student = (Student)request.getSession().getAttribute("user");
+//        String filepath = student.getHeadportraitUrl();     //path是你服务器上图片的绝对路径
+//        File file = new File(filepath);
+//        if(file.exists()){
+//            try {
+//                fis = new FileInputStream(file);
+//                long size = file.length();
+//                byte[] temp = new byte[(int) size];
+//                fis.read(temp, 0, (int) size);
+//                fis.close();
+//                byte[] data = temp;
+//                response.setContentType("image/png");
+//                os = response.getOutputStream();
+//                os.write(data);
+//                os.flush();
+//                os.close();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     @PostMapping("/studentUpdateInfo")
     @ResponseBody
@@ -200,7 +200,6 @@ public class studentController {
                 }
             }
         }
-
         return updateStudentDTO;
     }
     public boolean checkname(String name)
