@@ -1,10 +1,12 @@
 package com.yq.train.controller;
 
 import com.yq.train.dto.PaginationDTO;
+import com.yq.train.dto.UpdateCourseDTO;
 import com.yq.train.dto.UpdateTeacherDTO;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
+import com.yq.train.service.CourseService;
 import com.yq.train.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +32,8 @@ public class teacherController {
     private TeacherMapper teacherMapper;
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private CourseService courseService;
     @GetMapping("/teacher")
     public String loginTeacher(Model model,
                                HttpServletRequest request,
@@ -126,7 +131,6 @@ public class teacherController {
         if(updateTeacherDTO.getUserPwd().equals("")||updateTeacherDTO.getUserPwd2().equals("")&&updateTeacherDTO.getUserPwd3().equals("")){
             updateTeacherDTO.setType(0);
         }else {
-
             if(!teacher.getUserPwd().equals(updateTeacherDTO.getUserPwd())){
                 updateTeacherDTO.setType(1);
             }else {
@@ -139,10 +143,10 @@ public class teacherController {
                         teacher.setUserPwd(updateTeacherDTO.getUserPwd2());
                         Date date = new Date();
                         teacher.setGmtModified(date);
-                        TeacherExample studentExample = new TeacherExample();
-                        studentExample.createCriteria()
+                        TeacherExample teacherExample = new TeacherExample();
+                        teacherExample.createCriteria()
                                 .andIdEqualTo(teacher.getId());
-                        teacherMapper.updateByExampleSelective(teacher,studentExample);
+                        teacherMapper.updateByExampleSelective(teacher,teacherExample);
                         updateTeacherDTO.setType(3);
                     }
 
@@ -182,9 +186,10 @@ public class teacherController {
                     course.setClassTime(classTime);
                     course.setStudentCount(0);
                     course.setTeachingId(teacher.getId());
-
-                    if(file1 != null){
-                        String originalFilename = file1.getOriginalFilename();
+                    String originalFilename = file1.getOriginalFilename();
+                    if(originalFilename == null || originalFilename.equals("")){
+                        course.setHeadportraitUrl("1.png");
+                    }else {
                         String imageName[] = originalFilename.split("\\.");
                         //新的文件名字
                         String newFileName = teacher.getiName() + course.getCourseDescribe() + "." + imageName[1];
@@ -194,8 +199,6 @@ public class teacherController {
                         file1.transferTo(targetFile);
                         //productModel.setImage(newFileName);
                         course.setHeadportraitUrl(newFileName);
-                    }else {
-                        course.setHeadportraitUrl("1.png");
                     }
 
                     Date date = new Date();
@@ -211,8 +214,6 @@ public class teacherController {
             model.addAttribute("msg","已有该课程！");
             return "msg";
         }
-
-
         return "redirect:/teacher";
     }
     public static boolean isNumeric(String str){
@@ -223,4 +224,100 @@ public class teacherController {
         }
         return true;
     }
+    @PostMapping(value = "/updateCourse")
+    @ResponseBody
+    public Object updateCourse(@RequestBody UpdateCourseDTO updateCourseDTO, HttpServletRequest request) throws IOException {
+
+        Course course = new Course();
+        CourseExample courseExample = new CourseExample();
+        courseExample.createCriteria()
+                .andIdEqualTo(updateCourseDTO.getCourseId());
+        if(updateCourseDTO.getUserType() == 0){
+            courseService.updateCourse(updateCourseDTO,course,courseExample);
+
+        }else {
+            Teacher teacher = (Teacher) request.getSession().getAttribute("user");
+            if(teacher.getId() == updateCourseDTO.getTeachingId()){
+                courseService.updateCourse(updateCourseDTO,course,courseExample);
+            }else {
+                updateCourseDTO.setType(0);
+            }
+        }
+
+        return updateCourseDTO;
+    }
+    @RequestMapping(value = "/courseUpdateImage")
+    public String  courseUpdateImage(
+            MultipartFile file,
+            HttpServletRequest request,
+            @RequestParam(value = "courseId") Integer courseId,
+            @RequestParam(value = "teachingId")Integer teachingId,
+            @RequestParam(value = "userType")Integer userType,
+            Model model) throws IOException {
+        Course course = new Course();
+        CourseExample courseExample = new CourseExample();
+        courseExample.createCriteria()
+                .andIdEqualTo(courseId);
+        List<Course> courses = courseMapper.selectByExample(courseExample);
+        Course course1 = courses.get(0);
+        if(userType == 0){
+            //Admin admin  = (Admin) request.getSession().getAttribute("user");
+            TeacherExample teacherExample = new TeacherExample();
+            teacherExample.createCriteria()
+                    .andIdEqualTo(teachingId);
+
+            List<Teacher> teachers = teacherMapper.selectByExample(teacherExample);
+            Teacher teacher = teachers.get(0);
+            String originalFilename = file.getOriginalFilename();
+            if(originalFilename == null || originalFilename.equals("")){
+                model.addAttribute("msg","图片不能为空！");
+                return "msg";
+            }else {
+                courseService.updateCourseImg(file,course,teacher,courseExample,course1,originalFilename);
+                return "redirect:/admin";
+            }
+        }else {
+            Teacher teacher = (Teacher) request.getSession().getAttribute("user");
+            if(teacher.getId() == teachingId ){
+                String originalFilename = file.getOriginalFilename();
+                if(originalFilename == null || originalFilename.equals("")){
+                    model.addAttribute("msg","图片不能为空！");
+                    return "msg";
+                }else {
+                    courseService.updateCourseImg(file,course,teacher,courseExample,course1,originalFilename);
+                }
+            }else {
+                model.addAttribute("msg","您无权限修改！");
+                return "msg";
+
+            }
+            return "redirect:/teacher";
+        }
+
+       // return "redirect:/teacher";
+    }
+
+    @PostMapping(value = "/deleteCourse")
+    @ResponseBody
+    public Object deleteCourse(@RequestBody UpdateCourseDTO updateCourseDTO, HttpServletRequest request) throws IOException {
+
+        CourseExample courseExample = new CourseExample();
+        courseExample.createCriteria()
+                .andIdEqualTo(updateCourseDTO.getCourseId());
+        if(updateCourseDTO.getUserType() == 0){
+            courseMapper.deleteByExample(courseExample);
+            updateCourseDTO.setType(3);
+        }else {
+            Teacher teacher = (Teacher) request.getSession().getAttribute("user");
+            if(teacher.getId() == updateCourseDTO.getTeachingId()){
+                courseMapper.deleteByExample(courseExample);
+                updateCourseDTO.setType(1);
+            }else {
+                updateCourseDTO.setType(0);
+            }
+        }
+
+        return updateCourseDTO;
+    }
+
 }

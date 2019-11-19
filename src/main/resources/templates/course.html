@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
     <title th:text="${course.courseDescribe}"></title>
-    <link rel="stylesheet" th:href="@{/static/css/bootstrap.css}"/>
-    <link rel="stylesheet" th:href="@{/static/css/bootstrap-theme.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/css/community.css}"/>
-    <script th:href="@{/static/js/community.css}" type="application/javascript"></script>
-    <script th:href="@{/static/js/bootstrap.js}" type="application/javascript"></script>
-    <!--<link rel="stylesheet" href="css/bootstrap-theme.min.css"/>-->
-    <!--<link rel="stylesheet" href="css/community.css"/>-->
-    <!--<script src="js/jquery-3.3.1.min.js"></script>-->
-    <!--<script src="js/bootstrap.js" type="application/javascript"></script>-->
-    <!--<script src="js/vue.min.js" type="application/javascript"></script>-->
+    <!--<link rel="stylesheet" th:href="@{/static/css/bootstrap.css}"/>-->
+    <!--<link rel="stylesheet" th:href="@{/static/css/bootstrap-theme.min.css}"/>-->
+    <!--<link rel="stylesheet" th:href="@{/static/css/community.css}"/>-->
+    <!--<script th:href="@{/static/js/community.css}" type="application/javascript"></script>-->
+    <!--<script th:href="@{/static/js/bootstrap.min.js}" type="application/javascript"></script>-->
+    <!--<script th:href="@{/static/js/jquery-3.3.1.min.js}" type="application/javascript"></script>-->
+
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+    <!--<script src="/js/vue.min.js" type="application/javascript"></script>-->
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -27,19 +30,18 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" >
                 <!--<li><a href="/profile/replies">通知  <span class="badge" th:text="${session.unreadCount}"></span></a></li>-->
+                <li th:if="${session.user.userType == 0 || session.user.userType == 2}">
+                    <a onclick="return deleteCourse()">删除课程</a>
+                </li>
+                <li  th:if="${session.user.userType == 0 || session.user.userType == 2}">
+                    <!--<a data-toggle="modal" data-target="#updateCourseInfo" href="#"  role="button" >-->
+                        <!--<span >修改课程信息</span>-->
+                        <!--<span class="caret"></span>-->
+                    <!--</a>-->
 
-                <li class="dropdown" th:if="${session.user.userType != 1}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
-
-                        <span>课程信息操作</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="">修改信息</a></li>
-
-                    </ul>
+                <a data-toggle="modal" data-target="#updateCourseInfo">修改课程信息</a>
                 </li>
 
             </ul>
@@ -52,7 +54,10 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>课程</h2>
             <hr>
-            <p><img th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}" style="width: 500px"></p>
+            <p><img th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}" style="width: 500px">
+
+                <button data-toggle="modal" data-target="#updateCourseImage" th:if="${session.user.userType == 0 || session.user.userType == 2}" style="margin-top: 332px" type="button" class="btn btn-default">修改图片</button>
+            </p>
 
 
             <div style="font-size: 25px;display: flex;margin-bottom: 40px">
@@ -92,5 +97,175 @@
         </div>
     </div>
 </div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="updateCourseImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 400px">
+        <form class="modal-content" action="/courseUpdateImage" method="post" enctype="multipart/form-data">
+
+            <div  >
+                <h3 style="text-align: center">更换课程图片</h3>
+                <hr>
+                <div class="form-group" style="margin-left: 10px">
+
+                    <!--<label th:text="${course.teachingId}" name="teachingId"></label>-->
+                    <input type="hidden" th:value="${course.teachingId}" style="width:300px;" name="teachingId" readonly  unselectable="on" />
+                </div>
+                <input type="hidden" th:value="${session.user.userType}" style="width:300px;" name="userType" readonly  unselectable="on" />
+                <div class="form-group" style="margin-left: 10px">
+
+                    <!--<label th:text="${course.id}" name="courseId"></label>-->
+                    <input type="hidden" th:value="${course.id}" style="width:300px;" name="courseId" readonly  unselectable="on" />
+
+                </div>
+
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="file">图片*</label>
+                    <input type="file" class="form-control" id="file" name="file">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="submit" class="btn btn-primary " style="width:70px;height:40px;">提交</button>
+
+            </div>
+        </form>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="updateCourseInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog"  style="width: 400px">
+        <div class="modal-content"  >
+            <div  >
+                <h3 style="text-align: center">修改课程</h3>
+                <hr>
+                <input type="hidden" th:value="${session.user.userType}" style="width:300px;" id="userType" readonly  unselectable="on" />
+
+                <div class="form-group" style="margin-left: 10px">
+                    <label >教师编号*</label>
+                    <label th:text="${course.teachingId}" id="teachingId"></label>
+                    <!--<input type="text" th:value="${course.teachingId}" style="width:300px;" id="teachingId" readonly  unselectable="on" />-->
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label >课程编号*</label>
+                    <label th:text="${course.id}" id="courseId"></label>
+                    <!--<input type="text" th:value="${course.id}" style="width:300px;" id="courseId" readonly  unselectable="on" />-->
+
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="courseDescribe">课程名称*</label>
+                    <input type="text" class="form-control" style="width:300px;"
+                           id="courseDescribe" th:value="${course.courseDescribe}"  required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="price">课程价格*</label>
+                    <span id="pricechek" class="error"> </span>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="price"   th:value="${course.price}" required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="classTime">上课时间*</label>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="classTime" th:value="${course.classTime}" required />
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <input type="submit" class="btn btn-primary" onclick="updateCourse()" style="width:70px;height:40px;"></input>
+
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+    function updateCourse() {
+        // var teachingId = $("#teachingId").val();
+        // var courseId = $("#courseId").val();
+        var teachingId = $("#teachingId").html();
+        var courseId = $("#courseId").html();
+        var courseDescribe = $("#courseDescribe").val();
+        var price = $("#price").val();
+        var classTime = $("#classTime").val();
+        var userType = $("#userType").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/updateCourse",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "courseId":courseId,
+                "teachingId":teachingId,
+                "courseDescribe": courseDescribe,
+                "price": price,
+                "classTime": classTime,
+                "userType":userType
+            }),
+            success: function (data) {
+                if(data.type == 3){
+                    alert("修改成功！")
+                    location.reload();
+                }
+                if(data.type == 2){
+                    alert("价格为数字！");
+                }
+                if(data.type == 1){
+                    alert("课程名称不能为空！");
+                }
+                if(data.type == 0){
+                    alert("您无权限修改！");
+                }
+                if(data.type == 4){
+                    alert("价格不能为空！");
+                }
+            }
+        });
+    }
+    function deleteCourse() {
+        var teachingId = $("#teachingId").html();
+        var courseId = $("#courseId").html();
+        var userType = $("#userType").val();
+
+        var msg = "确定删除该条数据？";
+        if (confirm(msg)==true){
+            $.ajax({
+                type: "POST",
+                url: "/deleteCourse",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "courseId":courseId,
+                    "teachingId":teachingId,
+                    "userType":userType
+                }),
+                success: function (data) {
+
+                    if(data.type == 1){
+                        alert("删除成功！");
+                        window.location.href="/teacher";
+                    }
+                    if(data.type == 0){
+                        alert("您无权限修改！");
+                    }
+                    if(data.type == 3){
+                        alert("删除成功！");
+                        window.location.href="/admin";
+                    }
+
+                }
+            });
+            return true;
+        }else{
+            return false;
+        }
+
+
+    }
+</script>
 </body>
 </html>
