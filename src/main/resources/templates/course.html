@@ -30,12 +30,16 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-            <ul class="nav navbar-nav navbar-right" >
+            <ul class="nav navbar-nav navbar-right" th:if="${session.user.userType == 0 || session.user.userType == 2}">
+
+                <li>
+                    <a th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}}">查看本课程学生</a>
+                </li>
                 <!--<li><a href="/profile/replies">通知  <span class="badge" th:text="${session.unreadCount}"></span></a></li>-->
-                <li th:if="${session.user.userType == 0 || session.user.userType == 2}">
+                <li>
                     <a onclick="return deleteCourse()">删除课程</a>
                 </li>
-                <li  th:if="${session.user.userType == 0 || session.user.userType == 2}">
+                <li>
                     <!--<a data-toggle="modal" data-target="#updateCourseInfo" href="#"  role="button" >-->
                         <!--<span >修改课程信息</span>-->
                         <!--<span class="caret"></span>-->
@@ -51,7 +55,7 @@
 
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
             <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>课程</h2>
             <hr>
             <p><img th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}" style="width: 500px">
@@ -78,7 +82,7 @@
                 <a href="/teacher" th:if="${session.user.userType == 2}">返回教师页面</a>
             </div>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
 
 
             <h3>好好学习</h3>
@@ -106,16 +110,13 @@
                 <h3 style="text-align: center">更换课程图片</h3>
                 <hr>
                 <div class="form-group" style="margin-left: 10px">
-
                     <!--<label th:text="${course.teachingId}" name="teachingId"></label>-->
                     <input type="hidden" th:value="${course.teachingId}" style="width:300px;" name="teachingId" readonly  unselectable="on" />
                 </div>
                 <input type="hidden" th:value="${session.user.userType}" style="width:300px;" name="userType" readonly  unselectable="on" />
                 <div class="form-group" style="margin-left: 10px">
-
                     <!--<label th:text="${course.id}" name="courseId"></label>-->
                     <input type="hidden" th:value="${course.id}" style="width:300px;" name="courseId" readonly  unselectable="on" />
-
                 </div>
 
                 <div class="form-group" style="margin-left: 10px">
@@ -263,7 +264,38 @@
         }else{
             return false;
         }
+    }
 
+    function courseStudents() {
+        var teachingId = $("#teachingId").html();
+        var courseId = $("#courseId").html();
+        var userType = $("#userType").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/courseStudents",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "courseId": courseId,
+                "teachingId": teachingId,
+                "userType": userType
+            }),
+            success: function (data) {
+
+                if (data.type == 1) {
+                    alert("删除成功！");
+                    window.location.href = "/teacher";
+                }
+                if (data.type == 0) {
+                    alert("您无权限修改！");
+                }
+                if (data.type == 3) {
+                    alert("删除成功！");
+                    window.location.href = "/admin";
+                }
+
+            }
+        });
 
     }
 </script>
