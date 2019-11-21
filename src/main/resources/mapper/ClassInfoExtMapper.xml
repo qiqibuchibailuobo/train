@@ -24,7 +24,7 @@
     </where>
   </select>
   <select id="selectByTeacherStudentSearch" parameterType="com.yq.train.dto.TeacherStudentDTO" resultMap="BaseResultMap">
-    select * from class_info 
+    select * from class_info
     <where>
       <if test="search != null">
         and class_info.student_id in(select id from student where  i_name regexp #{search})

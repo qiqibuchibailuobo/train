@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class ClassInfoDTO {
+    private int courseId;
+    private int studentId;
     private String studentName;
     private String teacherName;
     private String courseName;

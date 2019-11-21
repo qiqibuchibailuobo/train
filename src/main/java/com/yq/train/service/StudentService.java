@@ -96,6 +96,8 @@ public class StudentService {
                 Course course = courseMapper.selectByPrimaryKey(classInfo.getCourseId());
                 ClassInfoDTO classInfoDTO = new ClassInfoDTO();
 //            BeanUtils.copyProperties(classInfo,classInfoDTO);
+                classInfoDTO.setCourseId(course.getId());
+                classInfoDTO.setStudentId(student.getId());
                 classInfoDTO.setTeacherName(teacher.getiName());
                 classInfoDTO.setStudentName(student.getiName());
                 classInfoDTO.setCourseName(course.getCourseDescribe());

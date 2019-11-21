@@ -205,6 +205,7 @@ public class teacherController {
                     course.setGmtCreate(date);
                     course.setGmtModified(date);
                     courseMapper.insert(course);
+                    teacher.setCourseTotal(teacher.getCourseTotal()+1);
                     model.addAttribute("msg","课程添加成功");
 
                 }
@@ -305,11 +306,20 @@ public class teacherController {
         courseExample.createCriteria()
                 .andIdEqualTo(updateCourseDTO.getCourseId());
         if(updateCourseDTO.getUserType() == 0){
+            Course course = courseMapper.selectByPrimaryKey(updateCourseDTO.getCourseId());
+            Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
+            int a = teacher.getCourseTotal();
+            teacher.setCourseTotal(a-1);
+            teacherMapper.updateByPrimaryKeySelective(teacher);
             courseMapper.deleteByExample(courseExample);
+
             updateCourseDTO.setType(3);
         }else {
             Teacher teacher = (Teacher) request.getSession().getAttribute("user");
             if(teacher.getId() == updateCourseDTO.getTeachingId()){
+                int a = teacher.getCourseTotal();
+                teacher.setCourseTotal(a-1);
+                teacherMapper.updateByPrimaryKeySelective(teacher);
                 courseMapper.deleteByExample(courseExample);
                 updateCourseDTO.setType(1);
             }else {

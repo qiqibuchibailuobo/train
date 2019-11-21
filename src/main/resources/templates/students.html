@@ -43,11 +43,13 @@
 </nav>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>本课学生上课信息</h2>
-            <hr>
+            <button class="btn btn-primary btn-md" type="button"
+                    id="deleteButton" onclick="return deleteStudent()" style="margin-left: 70%">移除本课程</button>
             <table class="table table-hover" >
                 <tr>
+                    <th><input type="checkbox" id="selectAll" name="selectAll" /></th>
                     <th>学生姓名</th>
                     <th>教师姓名</th>
                     <th>课程名称</th>
@@ -56,6 +58,7 @@
                     <th>预约状态</th>
                 </tr>
                 <tr th:each="studentInfo:${pagination.data}">
+                   <td><input type="checkbox" class="checkb" name="chooseInfo" id="chooseInfo" th:value="${studentInfo.studentId}"/></td>
                     <td th:text="${studentInfo.studentName}"></td>
                     <td th:text="${studentInfo.teacherName}"></td>
                     <td th:text="${studentInfo.courseName}"></td>
@@ -66,7 +69,7 @@
                 </tr>
             </table>
             <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
-            <a href="/teacher" th:if="${session.user.userType == 2}">返回教师页面</a>
+            <a href="/teacher" style="margin-left: 83%" th:if="${session.user.userType == 2}">返回教师页面</a>
 
             <nav aria-label="Page navigation">
                 <ul class="pagination">
@@ -100,5 +103,61 @@
 
     </div>
 </div>
+<script>
+
+    function deleteStudent() {
+        var str="";
+        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
+        var courseId = $("#courseId").val();
+        for( var i=0;i<sel.length;i++){
+            if(sel[i].checked==true)
+                str+=sel[i].value+",";
+        }
+        if(str==""){
+            alert("请至少选择一条记录");
+            return false;
+        }
+
+
+        var msg = "确定删除该条数据？";
+        if (confirm(msg)==true){
+
+
+            $.ajax({
+                type : "POST",
+                contentType: "application/json;charset=UTF-8",
+                url : "/batchDeletes",
+                data: JSON.stringify({
+                    "ids": str
+                }),
+                success : function(data) {
+                    window.location.reload();
+                },
+                error : function(data) {
+                    alert("删除失败!")
+                    window.location.reload();
+
+                }
+            });
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>
+<script>
+    $('input[name="selectAll"]').on("click",function(){
+        if($(this).is(':checked')){
+            $('input[name="chooseInfo"]').each(function(){
+                $(this).prop("checked",true);
+            });
+        }else{
+            $('input[name="chooseInfo"]').each(function(){
+                $(this).prop("checked",false);
+            });
+        }
+    });
+
+</script>
 </body>
 </html>
