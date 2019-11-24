@@ -1,9 +1,6 @@
 package com.yq.train.controller;
 
-import com.yq.train.dto.CourseDTO;
-import com.yq.train.dto.DeleteStudentDTO;
-import com.yq.train.dto.PaginationDTO;
-import com.yq.train.dto.UpdateCourseDTO;
+import com.yq.train.dto.*;
 import com.yq.train.mapper.ClassInfoMapper;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.StudentMapper;
@@ -58,8 +55,6 @@ public class courseController {
         courseExample.createCriteria()
                 .andIdEqualTo(id);
         Course course = courseMapper.selectByPrimaryKey(id);
-
-
         if(userType == 0){
             if(search == ""){
                 search = null;
@@ -89,21 +84,9 @@ public class courseController {
         }
     }
     /**
-     * 批量删除 batch
+     * 批量移除学生
      */
-//    @PostMapping("/batchDeletes")
-//    @ResponseBody
-//    public Object batchDeletes(@RequestBody DeleteStudentDTO deleteStudentDTO, HttpServletRequest request){
-//        //String items = request.getParameter("ids");
-//        List<String> delList = new ArrayList<>();
-//        String[] strs = deleteStudentDTO.getIds().split(",");
-//        for (String str : strs) {
-//            delList.add(str);
-//        }
-////        userService.batchDeletes(delList);
-//        return deleteStudentDTO;
-//    }
-    @PostMapping("/batchDeletes")
+    @PostMapping("/studentDeletes")
     @ResponseBody
     public Object batchDeletes(@RequestBody DeleteStudentDTO deleteStudentDTO,HttpServletRequest request) {
         String[] strs = deleteStudentDTO.getIds().split(",");
@@ -115,8 +98,6 @@ public class courseController {
             Integer studentId =  delList.get(i);
 
             ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(studentId);
-
-
             Course course = courseMapper.selectByPrimaryKey(classInfo.getCourseId());
             int a = course.getStudentCount();
             course.setStudentCount(a-1);
@@ -133,4 +114,65 @@ public class courseController {
         }
         return deleteStudentDTO;
     }
+
+    /**
+     * 批量预约学生
+     */
+    @PostMapping("/appointmentStudent")
+    @ResponseBody
+    public Object appointmentStudent(@RequestBody DeleteStudentDTO deleteStudentDTO,HttpServletRequest request) {
+        String[] strs = deleteStudentDTO.getIds().split(",");
+        List<Integer> delList = new ArrayList<>();
+        for (String str : strs) {
+            delList.add(Integer.parseInt(str));
+        }
+        for(int i = 0;i<delList.size();i++){
+            Integer studentId =  delList.get(i);
+
+            ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(studentId);
+            classInfo.setStatus(1);
+            classInfoMapper.updateByPrimaryKeySelective(classInfo);
+
+        }
+        return deleteStudentDTO;
+    }
+    /**
+     * 批量取消预约学生
+     */
+    @PostMapping("/unAppointmentStudent")
+    @ResponseBody
+    public Object unAppointmentStudent(@RequestBody DeleteStudentDTO deleteStudentDTO,HttpServletRequest request) {
+        String[] strs = deleteStudentDTO.getIds().split(",");
+        List<Integer> delList = new ArrayList<>();
+        for (String str : strs) {
+            delList.add(Integer.parseInt(str));
+        }
+        for(int i = 0;i<delList.size();i++){
+            Integer studentId =  delList.get(i);
+
+            ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(studentId);
+            classInfo.setStatus(0);
+            classInfoMapper.updateByPrimaryKeySelective(classInfo);
+
+        }
+        return deleteStudentDTO;
+    }
+    /**
+     * 修改学生预约状态
+     */
+    @PostMapping("/updateRemnantCourse")
+    @ResponseBody
+    public Object updateRemnantCourse(@RequestBody RemnantCourseDTO remnantCourseDTO) {
+        ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(remnantCourseDTO.getStudentId());
+        if(remnantCourseDTO.getRemnantCourse()!=0){
+            classInfo.setRemnantCourse(remnantCourseDTO.getRemnantCourse());
+            classInfoMapper.updateByPrimaryKeySelective(classInfo);
+            remnantCourseDTO.setType(0);
+        }else {
+            remnantCourseDTO.setType(1);
+        }
+
+        return remnantCourseDTO;
+    }
+
 }

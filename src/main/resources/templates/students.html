@@ -45,9 +45,16 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>本课学生上课信息</h2>
-            <button class="btn btn-primary btn-md" type="button"
-                    id="deleteButton" onclick="return deleteStudent()" style="margin-left: 70%">移除本课程</button>
-            <table class="table table-hover" >
+            <div style="margin-left: 80%;margin-bottom: 10px">
+                <button class="btn btn-success btn-md" type="button"
+                        id="appointmentButton" onclick="return appointmentStudent()" >预约</button>
+                <button class="btn btn-info btn-md" type="button"
+                        id="unAppointmentButton" onclick="return unAppointmentStudent()" >取消预约</button>
+                <button class="btn btn-danger btn-md" type="button"
+                        id="deleteButton" onclick="return deleteStudent()" >移除本课程</button>
+            </div>
+
+            <table class="table table-hover" id="myTable">
                 <tr>
                     <th><input type="checkbox" id="selectAll" name="selectAll" /></th>
                     <th>学生姓名</th>
@@ -56,16 +63,18 @@
                     <th>剩余课时</th>
                     <th>上课时间</th>
                     <th>预约状态</th>
+                    <th>修改剩余课时</th>
                 </tr>
                 <tr th:each="studentInfo:${pagination.data}">
                    <td><input type="checkbox" class="checkb" name="chooseInfo" id="chooseInfo" th:value="${studentInfo.studentId}"/></td>
                     <td th:text="${studentInfo.studentName}"></td>
                     <td th:text="${studentInfo.teacherName}"></td>
                     <td th:text="${studentInfo.courseName}"></td>
-                    <td th:text="${studentInfo.remnantCourse}"></td>
+                    <td  id="remnantCourse1" ><label th:text="${studentInfo.remnantCourse}"></label></td>
                     <td th:text="${studentInfo.classTime}"></td>
-                    <td th:text="${studentInfo.status}"></td>
-
+                    <td th:text="${studentInfo.status}" th:if="${studentInfo.status == '已预约'}" ></td>
+                    <td th:text="${studentInfo.status}" th:if="${studentInfo.status == '未预约'}" style="color: red"></td>
+                    <td><input style="margin-top:-7px" class="btn btn-primary btn-md" type="button" onclick="openAddModal(this)" value="修改"></input></td>
                 </tr>
             </table>
             <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
@@ -103,7 +112,34 @@
 
     </div>
 </div>
-<script>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="updateRemnantCourse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog"  style="width: 400px">
+        <div class="modal-content">
+
+            <div>
+                <h3 style="text-align: center">修改信息</h3>
+                <hr>
+
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="remnantCourse">剩余课时*</label>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="remnantCourse" placeholder="剩余课时"   required />
+                </div>
+
+            </div>
+
+            <div  class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary "  style="width:70px;height:40px;"  onclick="updateremnantCourse()" >修改</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script language="javascript">
 
     function deleteStudent() {
         var str="";
@@ -114,19 +150,15 @@
                 str+=sel[i].value+",";
         }
         if(str==""){
-            alert("请至少选择一条记录");
+            alert("请至少选择一名学生");
             return false;
         }
-
-
-        var msg = "确定删除该条数据？";
+        var msg = "确定将这些学生移除本课堂？";
         if (confirm(msg)==true){
-
-
             $.ajax({
                 type : "POST",
                 contentType: "application/json;charset=UTF-8",
-                url : "/batchDeletes",
+                url : "/studentDeletes",
                 data: JSON.stringify({
                     "ids": str
                 }),
@@ -134,7 +166,7 @@
                     window.location.reload();
                 },
                 error : function(data) {
-                    alert("删除失败!")
+                    alert("移除失败!")
                     window.location.reload();
 
                 }
@@ -142,6 +174,120 @@
             return true;
         }else{
             return false;
+        }
+    }
+    function appointmentStudent() {
+        var str="";
+        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
+        var courseId = $("#courseId").val();
+        for( var i=0;i<sel.length;i++){
+            if(sel[i].checked==true)
+                str+=sel[i].value+",";
+        }
+        if(str==""){
+            alert("请至少选择一名学生");
+            return false;
+        }
+        var msg = "确定将这些学生预约本课堂？";
+        if (confirm(msg)==true){
+            $.ajax({
+                type : "POST",
+                contentType: "application/json;charset=UTF-8",
+                url : "/appointmentStudent",
+                data: JSON.stringify({
+                    "ids": str
+                }),
+                success : function(data) {
+                    window.location.reload();
+                },
+                error : function(data) {
+                    alert("预约失败!")
+                    window.location.reload();
+
+                }
+            });
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function unAppointmentStudent() {
+        var str="";
+        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
+        var courseId = $("#courseId").val();
+        for( var i=0;i<sel.length;i++){
+            if(sel[i].checked==true)
+                str+=sel[i].value+",";
+        }
+        if(str==""){
+            alert("请至少选择一名学生");
+            return false;
+        }
+        var msg = "确定将这些学生取消预约本课堂？";
+        if (confirm(msg)==true){
+            $.ajax({
+                type : "POST",
+                contentType: "application/json;charset=UTF-8",
+                url : "/unAppointmentStudent",
+                data: JSON.stringify({
+                    "ids": str
+                }),
+                success : function(data) {
+                    window.location.reload();
+                },
+                error : function(data) {
+                    alert("取消预约失败!")
+                    window.location.reload();
+
+                }
+            });
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    function openAddModal(node) {
+        $("#updateRemnantCourse").modal('show');
+
+
+        // var remnantCourse1 = $("#remnantCourse1").text();
+        // var chose = $("#chooseInfo").val();
+        //
+        // alert(chose);
+        var tr1 = node.parentNode.parentNode;
+        //alert(tr1.rowIndex);
+        // alert(tr1.cells[0].childNodes[0].value); //获取的方法一
+        // alert(tr1.cells[4].childNodes[9].value);//获取学生编号
+        var remnantCourse = $("#remnantCourse").val();
+         window.studentId = tr1.cells[0].childNodes[0].value
+        // document.getElementById("remnantCourse").value=;
+
+    }
+    function updateremnantCourse() {
+        var remnantCourse = $("#remnantCourse").val();
+        var expr = /\D/i;
+        if (expr.test(remnantCourse)) {
+            alert("不能输入非数字字符");
+        }else {
+            $.ajax({
+                type : "POST",
+                contentType: "application/json;charset=UTF-8",
+                url : "/updateRemnantCourse",
+                data: JSON.stringify({
+                    "studentId": studentId,
+                    "remnantCourse":remnantCourse
+                }),
+                success : function(data) {
+                    if (data.type == 0){
+                        alert("修改成功！");
+                        window.location.reload();
+                    }else {
+                        alert("修改失败");
+                        window.location.reload();
+                    }
+                }
+            });
         }
     }
 </script>
