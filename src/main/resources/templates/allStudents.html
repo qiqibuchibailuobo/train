@@ -51,7 +51,9 @@
                 <input type="checkbox" id="selectAll" name="selectAll" />
                 勾上全选
                 <button class="btn btn-info btn-md" type="button"
-                        id="unAppointmentButton" onclick="return unAppointmentStudent()" >加入课程</button>
+                        id="addStudentIntoCourseButton" onclick="return addStudentIntoCourse()" >加入课程</button>
+                <input type="hidden" th:value="${course.id}" style="width:300px;" id="courseId" name="courseId" readonly  unselectable="on" />
+
             </div>
             <div class="media" th:each="student:${pagination.data}">
                 <input type="checkbox" style="float: left;margin-right: 10px" class="checkb" name="chooseInfo" id="chooseInfo" th:value="${student.id}"/>
@@ -169,7 +171,8 @@
 </div><!-- /.modal -->
 <script language="javascript">
 
-    function deleteStudent() {
+
+    function addStudentIntoCourse() {
         var str="";
         var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
         var courseId = $("#courseId").val();
@@ -181,20 +184,21 @@
             alert("请至少选择一名学生");
             return false;
         }
-        var msg = "确定将这些学生移除本课堂？";
+        var msg = "确定将这些学生加入本课堂？";
         if (confirm(msg)==true){
             $.ajax({
                 type : "POST",
                 contentType: "application/json;charset=UTF-8",
-                url : "/studentDeletes",
+                url : "/addStudentIntoCourse",
                 data: JSON.stringify({
-                    "ids": str
+                    "ids": str,
+                    "courseId":courseId
                 }),
                 success : function(data) {
                     window.location.reload();
                 },
                 error : function(data) {
-                    alert("移除失败!")
+                    alert("加入失败!")
                     window.location.reload();
 
                 }
@@ -204,76 +208,7 @@
             return false;
         }
     }
-    function appointmentStudent() {
-        var str="";
-        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
-        var courseId = $("#courseId").val();
-        for( var i=0;i<sel.length;i++){
-            if(sel[i].checked==true)
-                str+=sel[i].value+",";
-        }
-        if(str==""){
-            alert("请至少选择一名学生");
-            return false;
-        }
-        var msg = "确定将这些学生预约本课堂？";
-        if (confirm(msg)==true){
-            $.ajax({
-                type : "POST",
-                contentType: "application/json;charset=UTF-8",
-                url : "/appointmentStudent",
-                data: JSON.stringify({
-                    "ids": str
-                }),
-                success : function(data) {
-                    window.location.reload();
-                },
-                error : function(data) {
-                    alert("预约失败!")
-                    window.location.reload();
 
-                }
-            });
-            return true;
-        }else{
-            return false;
-        }
-    }
-    function unAppointmentStudent() {
-        var str="";
-        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
-        var courseId = $("#courseId").val();
-        for( var i=0;i<sel.length;i++){
-            if(sel[i].checked==true)
-                str+=sel[i].value+",";
-        }
-        if(str==""){
-            alert("请至少选择一名学生");
-            return false;
-        }
-        var msg = "确定将这些学生取消预约本课堂？";
-        if (confirm(msg)==true){
-            $.ajax({
-                type : "POST",
-                contentType: "application/json;charset=UTF-8",
-                url : "/unAppointmentStudent",
-                data: JSON.stringify({
-                    "ids": str
-                }),
-                success : function(data) {
-                    window.location.reload();
-                },
-                error : function(data) {
-                    alert("取消预约失败!")
-                    window.location.reload();
-
-                }
-            });
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     function openAddModal(node) {
         $("#updateRemnantCourse").modal('show');

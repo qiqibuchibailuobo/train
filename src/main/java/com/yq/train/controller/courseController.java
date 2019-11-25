@@ -48,7 +48,7 @@ public class courseController {
             @PathVariable(name = "id") int id,
             @PathVariable(value = "userType")int userType,
             @RequestParam(name = "page",defaultValue = "1") Integer page,
-            @RequestParam(name = "size",defaultValue = "6") Integer size ,
+            @RequestParam(name = "size",defaultValue = "999") Integer size ,
             @RequestParam(name = "search",required = false) String  search,
             Model model){
         CourseExample courseExample = new CourseExample();
@@ -214,6 +214,32 @@ public class courseController {
         }
 
         return remnantCourseDTO;
+    }
+    /**
+     * 批量加入课堂
+     */
+    @PostMapping("/addStudentIntoCourse")
+    @ResponseBody
+    public Object addStudentIntoCourse(@RequestBody AddStudentIntoCourseDTO addStudentIntoCourseDTO,HttpServletRequest request) {
+        String[] strs = addStudentIntoCourseDTO.getIds().split(",");
+        List<Integer> delList = new ArrayList<>();
+        for (String str : strs) {
+            delList.add(Integer.parseInt(str));
+        }
+        for(int i = 0;i<delList.size();i++){
+            Integer studentId =  delList.get(i);
+
+            ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(studentId);
+            classInfo.setCourseId(addStudentIntoCourseDTO.getCourseId());
+            Course course = courseMapper.selectByPrimaryKey(addStudentIntoCourseDTO.getCourseId());
+            classInfo.setTeacherId(course.getTeachingId());
+            classInfo.setRemnantCourse(course.getClassHour());
+            classInfo.setStatus(0);
+
+            classInfoMapper.updateByPrimaryKeySelective(classInfo);
+
+        }
+        return addStudentIntoCourseDTO;
     }
 
 }

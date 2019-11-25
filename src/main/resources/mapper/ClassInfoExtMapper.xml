@@ -31,7 +31,7 @@
       </if>
       and course_id = #{courseId}
     </where>
-     limit 1,9999
+     limit 0,9999
   </select>
   <select id="AllStudentCountBySearch" parameterType="com.yq.train.dto.TeacherStudentDTO" resultType="java.lang.Integer">
     select count(*)  from class_info
