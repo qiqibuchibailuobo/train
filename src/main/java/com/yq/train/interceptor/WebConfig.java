@@ -26,8 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/getVerify",
                         "/register",
                         "/studentRegister",
-                        "/course",
-                        "/course/**",
                         "/error",
                         "/teacher/**",
                         "/static/**",

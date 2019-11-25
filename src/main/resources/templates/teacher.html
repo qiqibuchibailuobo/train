@@ -292,7 +292,12 @@
                     <label for="file">课程图片*</label>
                     <input type="file" class="form-control" style="width:300px;" id="file1" name="file1">
                 </div>
-
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="price">课时*</label>
+                    <span id="classHourChek" class="error"> </span>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="classHour"  name="classHour" onblur='checkClassHour()' required />
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -357,6 +362,17 @@
                 // alert("不能输入非数字字符");
                 document.getElementById("phone").innerHTML = "不能输入非数字字符";
 
+            }
+
+        }
+        function checkClassHour() {
+            var price = $("#classHour").val();
+            document.getElementById("classHourChek").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(price)) {
+                // alert("不能输入非数字字符");
+                document.getElementById("classHourChek").innerHTML = "不能输入非数字字符";
             }
 
         }
@@ -479,7 +495,6 @@
 <div th:if="${session.user.userType != 2}">
     <h1>您不是教师用户!</h1>
     <p><a class="btn btn-primary btn-lg" href="/" role="button">返回主页面</a></p>
-
 </div>
 </body>
 </html>

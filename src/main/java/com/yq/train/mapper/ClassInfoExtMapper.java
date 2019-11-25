@@ -9,4 +9,7 @@ public interface ClassInfoExtMapper {
     Integer teacherStudentCountBySearch(TeacherStudentDTO teacherStudentDTO);
 
     List<ClassInfo> selectByTeacherStudentSearch(TeacherStudentDTO teacherStudentDTO);
+    Integer AllStudentCountBySearch(TeacherStudentDTO teacherStudentDTO);
+
+    List<ClassInfo> selectByAllStudentSearch(TeacherStudentDTO teacherStudentDTO);
 }

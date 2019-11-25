@@ -3,6 +3,9 @@ package com.yq.train.controller;
 import com.yq.train.dto.PaginationDTO;
 import com.yq.train.dto.UpdateCourseDTO;
 import com.yq.train.dto.UpdateTeacherDTO;
+import com.yq.train.exception.CustomizeErrorCode;
+import com.yq.train.exception.CustomizeException;
+import com.yq.train.mapper.ClassInfoMapper;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
@@ -34,6 +37,8 @@ public class teacherController {
     private CourseMapper courseMapper;
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private ClassInfoMapper classInfoMapper;
     @GetMapping("/teacher")
     public String loginTeacher(Model model,
                                HttpServletRequest request,
@@ -162,7 +167,8 @@ public class teacherController {
             Model model,
             @RequestParam(value = "courseDescribe") String courseDescribe,
             @RequestParam(value = "price") String price,
-            @RequestParam(value = "classTime") String classTime) throws IOException {
+            @RequestParam(value = "classTime") String classTime,
+            @RequestParam(value = "classHour") String classHour) throws IOException {
 
         Teacher teacher = (Teacher)request.getSession().getAttribute("user");
         CourseExample courseExample = new CourseExample();
@@ -174,39 +180,45 @@ public class teacherController {
                 model.addAttribute("msg","课程信息不能为空");
                 return "msg";
             }else {
-                if(!isNumeric(price)){
-                    model.addAttribute("msg","请输入正确价格！");
+                if(!isNumeric(price)||!isNumeric(classHour)){
+                    model.addAttribute("msg","请输入数字！");
                     return "msg";
                 }else {
-                    String filePath = "D:\\MyGitHub\\images";
+                    try {
+                        int classHour1 = Integer.parseInt(classHour);
+                        String filePath = "D:\\MyGitHub\\images";
+                        Course course = new Course();
+                        course.setCourseDescribe(courseDescribe);
+                        course.setPrice(price);
+                        course.setClassTime(classTime);
+                        course.setStudentCount(0);
+                        course.setTeachingId(teacher.getId());
+                        course.setClassHour(classHour1);
+                        String originalFilename = file1.getOriginalFilename();
+                        if(originalFilename == null || originalFilename.equals("")){
+                            course.setHeadportraitUrl("1.png");
+                        }else {
+                            String imageName[] = originalFilename.split("\\.");
+                            //新的文件名字
+                            String newFileName = teacher.getiName() + course.getCourseDescribe() + "." + imageName[1];
+                            //封装上传文件位置的全路径
+                            File targetFile = new File(filePath, newFileName);
+                            //把本地文件上传到封装上传文件位置的全路径
+                            file1.transferTo(targetFile);
+                            //productModel.setImage(newFileName);
+                            course.setHeadportraitUrl(newFileName);
+                        }
 
-                    Course course = new Course();
-                    course.setCourseDescribe(courseDescribe);
-                    course.setPrice(price);
-                    course.setClassTime(classTime);
-                    course.setStudentCount(0);
-                    course.setTeachingId(teacher.getId());
-                    String originalFilename = file1.getOriginalFilename();
-                    if(originalFilename == null || originalFilename.equals("")){
-                        course.setHeadportraitUrl("1.png");
-                    }else {
-                        String imageName[] = originalFilename.split("\\.");
-                        //新的文件名字
-                        String newFileName = teacher.getiName() + course.getCourseDescribe() + "." + imageName[1];
-                        //封装上传文件位置的全路径
-                        File targetFile = new File(filePath, newFileName);
-                        //把本地文件上传到封装上传文件位置的全路径
-                        file1.transferTo(targetFile);
-                        //productModel.setImage(newFileName);
-                        course.setHeadportraitUrl(newFileName);
+                        Date date = new Date();
+                        course.setGmtCreate(date);
+                        course.setGmtModified(date);
+                        courseMapper.insert(course);
+                        teacher.setCourseTotal(teacher.getCourseTotal()+1);
+                        model.addAttribute("msg","课程添加成功");
+                    } catch (Exception e){
+                        throw new CustomizeException(CustomizeErrorCode.NOT_NUMBER);
                     }
 
-                    Date date = new Date();
-                    course.setGmtCreate(date);
-                    course.setGmtModified(date);
-                    courseMapper.insert(course);
-                    teacher.setCourseTotal(teacher.getCourseTotal()+1);
-                    model.addAttribute("msg","课程添加成功");
 
                 }
 
@@ -312,7 +324,18 @@ public class teacherController {
             teacher.setCourseTotal(a-1);
             teacherMapper.updateByPrimaryKeySelective(teacher);
             courseMapper.deleteByExample(courseExample);
-
+            ClassInfoExample classInfoExample = new ClassInfoExample();
+            classInfoExample.createCriteria()
+                    .andCourseIdEqualTo(updateCourseDTO.getCourseId());
+            List<ClassInfo> classInfos = classInfoMapper.selectByExample(classInfoExample);
+            for(int i = 0;i<classInfos.size();i++){
+                ClassInfo classInfo = classInfos.get(i);
+                classInfo.setCourseId(0);
+                classInfo.setRemnantCourse(0);
+                classInfo.setStatus(0);
+                classInfo.setTeacherId(0);
+                classInfoMapper.updateByPrimaryKeySelective(classInfo);
+            }
             updateCourseDTO.setType(3);
         }else {
             Teacher teacher = (Teacher) request.getSession().getAttribute("user");
@@ -321,6 +344,18 @@ public class teacherController {
                 teacher.setCourseTotal(a-1);
                 teacherMapper.updateByPrimaryKeySelective(teacher);
                 courseMapper.deleteByExample(courseExample);
+                ClassInfoExample classInfoExample = new ClassInfoExample();
+                classInfoExample.createCriteria()
+                        .andCourseIdEqualTo(updateCourseDTO.getCourseId());
+                List<ClassInfo> classInfos = classInfoMapper.selectByExample(classInfoExample);
+                for(int i = 0;i<classInfos.size();i++){
+                    ClassInfo classInfo = classInfos.get(i);
+                    classInfo.setCourseId(0);
+                    classInfo.setRemnantCourse(0);
+                    classInfo.setStatus(0);
+                    classInfo.setTeacherId(0);
+                    classInfoMapper.updateByPrimaryKeySelective(classInfo);
+                }
                 updateCourseDTO.setType(1);
             }else {
                 updateCourseDTO.setType(0);

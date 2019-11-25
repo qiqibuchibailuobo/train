@@ -83,12 +83,53 @@ public class courseController {
             }
         }
     }
+    @GetMapping("/course/{id}/Allstudents/{userType}")
+    public String courseAllStudents(
+            HttpServletRequest request,
+            @PathVariable(name = "id") int id,
+            @PathVariable(value = "userType")int userType,
+            @RequestParam(name = "page",defaultValue = "1") Integer page,
+            @RequestParam(name = "size",defaultValue = "6") Integer size ,
+            @RequestParam(name = "search",required = false) String  search,
+            Model model){
+        CourseExample courseExample = new CourseExample();
+        courseExample.createCriteria()
+                .andIdEqualTo(id);
+        Course course = courseMapper.selectByPrimaryKey(id);
+        if(userType == 0){
+            if(search == ""){
+                search = null;
+            }
+            PaginationDTO pagination = studentService.AllStudents(search,page,size);
+            model.addAttribute("pagination",pagination);
+            model.addAttribute("search",search);
+            CourseDTO courseDTO = courseService.getById(id);
+            model.addAttribute("course",courseDTO);
+            return "allStudents";
+        }else {
+            Teacher teacher = (Teacher) request.getSession().getAttribute("user");
+            if(teacher.getId() == course.getTeachingId()){
+                if(search == ""){
+                    search = null;
+                }
+                PaginationDTO pagination = studentService.AllStudents(search,page,size);
+                model.addAttribute("pagination",pagination);
+                model.addAttribute("search",search);
+                CourseDTO courseDTO = courseService.getById(id);
+                model.addAttribute("course",courseDTO);
+                return "allStudents";
+            }else {
+                model.addAttribute("msg","您无权限！");
+                return "msg";
+            }
+        }
+    }
     /**
      * 批量移除学生
      */
     @PostMapping("/studentDeletes")
     @ResponseBody
-    public Object batchDeletes(@RequestBody DeleteStudentDTO deleteStudentDTO,HttpServletRequest request) {
+    public Object batchDeletes(@RequestBody DeleteStudentDTO deleteStudentDTO) {
         String[] strs = deleteStudentDTO.getIds().split(",");
         List<Integer> delList = new ArrayList<>();
         for (String str : strs) {

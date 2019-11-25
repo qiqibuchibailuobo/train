@@ -10,7 +10,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     COMMENT_IS_EMPTY(2007,"输入内容不能为空"),
     READ_NOTIFICATION_FAIL(2008,"无法阅读别人的信息"),
     NOTIFICATION_NOT_FOUND(2009,"消息不见了" +
-            "");
+            ""),
+    NOT_NUMBER(2010,"请输入数字！");
 
     @Override
     public Integer getCode() {

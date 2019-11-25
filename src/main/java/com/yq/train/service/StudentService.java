@@ -118,4 +118,76 @@ public class StudentService {
 
         return paginationDTO;
     }
+    /**
+     * 返回所有未选课学生
+     * @param search
+     * @param page
+     * @param size
+     * @return
+     */
+    public PaginationDTO AllStudents(String search, Integer page, Integer size) {
+
+        if(StringUtils.isNotBlank(search)){
+            String [] tags = StringUtils.split(search," ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
+
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        Integer totalPage;
+
+        //QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        //CourseQueryDTO courseQueryDTO = new CourseQueryDTO();
+//        TeacherCourseDTO teacherCourseDTO = new TeacherCourseDTO();
+//        teacherCourseDTO.setSearch(search);
+//        teacherCourseDTO.setTeachingId(teachingId);
+        //courseQueryDTO.setSearch(search);
+        //Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
+        TeacherStudentDTO teacherStudentDTO = new TeacherStudentDTO();
+
+        teacherStudentDTO.setSearch(search);
+        teacherStudentDTO.setCourseId(0);
+
+        Integer totalCount = classInfoExtMapper.AllStudentCountBySearch(teacherStudentDTO);
+        if(totalCount != 0){
+            if (totalCount % size == 0) {
+                totalPage = totalCount / size;
+            } else {
+                totalPage = totalCount / size + 1;
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > totalPage) {
+                page = totalPage;
+            }
+            paginationDTO.setPagination(totalPage, page);
+
+            //分页size*(page-1)
+            Integer offset = size * (page - 1);
+            //List<Question> questions = questionMapper.list(offset,size);
+            CourseExample courseExample = new CourseExample();
+//        courseExample.setOrderByClause("gmt_create desc");
+            teacherStudentDTO.setSize(size);
+            teacherStudentDTO.setPage(offset);
+            //courseQueryDTO.setSize(size);
+
+            //courseQueryDTO.setPage(offset);
+            List<ClassInfo> classInfos = classInfoExtMapper.selectByAllStudentSearch(teacherStudentDTO);
+
+
+            List<Student> students = new ArrayList<>();
+
+            for (ClassInfo classInfo : classInfos) {
+                Student student = studentMapper.selectByPrimaryKey(classInfo.getStudentId());
+                students.add(student);
+            }
+            paginationDTO.setData(students);
+        }else {
+            paginationDTO.setData(null);
+        }
+
+        return paginationDTO;
+    }
 }
