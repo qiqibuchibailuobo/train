@@ -76,11 +76,24 @@
         </dependency>
 
 
+        <!--POI-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.14</version>
+        </dependency>
 
 
     </dependencies>
 
     <build>
+        <finalName>recruit-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -98,11 +111,10 @@
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>
                 </configuration>
-
-
-
             </plugin>
+
         </plugins>
+
     </build>
 
 </project>

@@ -232,10 +232,11 @@ public class courseController {
             ClassInfo classInfo = classInfoMapper.selectByPrimaryKey(studentId);
             classInfo.setCourseId(addStudentIntoCourseDTO.getCourseId());
             Course course = courseMapper.selectByPrimaryKey(addStudentIntoCourseDTO.getCourseId());
+            course.setStudentCount(course.getStudentCount()+1);
             classInfo.setTeacherId(course.getTeachingId());
             classInfo.setRemnantCourse(course.getClassHour());
             classInfo.setStatus(0);
-
+            courseMapper.updateByPrimaryKey(course);
             classInfoMapper.updateByPrimaryKeySelective(classInfo);
 
         }

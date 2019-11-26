@@ -67,7 +67,7 @@ public class registerController {
             Date date = new Date();
             student.setGmtCreate(date);
             student.setGmtModified(date);
-            student.setHeadportraitUrl("D:/MyGitHub/images/nice.jpg");
+            student.setHeadportraitUrl("nice.jpg");
             student.setUserType(1);
             ClassInfo classInfo = new ClassInfo();
 

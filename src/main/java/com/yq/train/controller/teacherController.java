@@ -1,16 +1,16 @@
 package com.yq.train.controller;
 
-import com.yq.train.dto.PaginationDTO;
-import com.yq.train.dto.UpdateCourseDTO;
-import com.yq.train.dto.UpdateTeacherDTO;
+import com.yq.train.dto.*;
 import com.yq.train.exception.CustomizeErrorCode;
 import com.yq.train.exception.CustomizeException;
 import com.yq.train.mapper.ClassInfoMapper;
 import com.yq.train.mapper.CourseMapper;
+import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
 import com.yq.train.service.CourseService;
 import com.yq.train.service.TeacherService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +29,8 @@ import java.util.List;
 
 @Controller
 public class teacherController {
+    @Autowired
+    private StudentMapper studentMapper;
     @Autowired
     private TeacherService teacherService;
     @Autowired
@@ -364,5 +366,51 @@ public class teacherController {
 
         return updateCourseDTO;
     }
+    @PostMapping(value = "/addStudent")
+    @ResponseBody
+    public Object addStudent(@RequestBody StudentDTO studentDTO, HttpServletRequest request) throws IOException {
+        Teacher teacher = (Teacher)request.getSession().getAttribute("user");
+        Student student = new Student();
+        if(studentDTO.getIname().equals("")||studentDTO.getIname() == null){
+            studentDTO.setType(1);
+        }else {
+            StudentExample studentExample = new StudentExample();
+            studentExample.createCriteria()
+                    .andUserNameEqualTo(studentDTO.getIname());
+            List<Student> allstudent = studentMapper.selectByExample(studentExample);
+            if(allstudent.size()>0){
+                studentDTO.setType(2);
+            }else {
+                student.setiName(studentDTO.getIname());
+                student.setUserName(studentDTO.getIname());
+                student.setUserPwd("123456");
+                student.setTel(studentDTO.getTel());
+                student.setAddTeacher(0);
+                Date date = new Date();
+                student.setGmtCreate(date);
+                student.setGmtModified(date);
+                student.setHeadportraitUrl("nice.jpg");
+                student.setUserType(1);
+                student.setAddTeacher(teacher.getId());
+                ClassInfo classInfo = new ClassInfo();
 
+                classInfo.setCourseId(0);
+                classInfo.setRemnantCourse(0);
+                classInfo.setStatus(0);
+                classInfo.setStudentId(student.getId());
+                classInfo.setTeacherId(0);
+
+                studentMapper.insert(student);
+                studentExample.createCriteria()
+                        .andUserNameEqualTo(studentDTO.getIname());
+                List<Student> allstudents = studentMapper.selectByExample(studentExample);
+                Student student1 = allstudents.get(0);
+                classInfo.setStudentId(student1.getId());
+                classInfoMapper.insert(classInfo);
+                studentDTO.setType(0);
+            }
+        }
+
+        return studentDTO;
+    }
 }

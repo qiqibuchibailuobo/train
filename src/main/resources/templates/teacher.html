@@ -32,6 +32,8 @@
                     <button type="submit" class="btn btn-default">搜索</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a data-toggle="modal" data-target="#addStudent" style="font-size: 20px;margin-top: 6px;">添加单个学生</a></li>
+                    <li><a data-toggle="modal" data-target="#addStudents" style="font-size: 20px;margin-top: 6px;">Excel批量添加学生</a></li>
                     <li><a data-toggle="modal" data-target="#addCourse" style="font-size: 20px;margin-top: 6px;">添加课程信息</a></li>
 
                     <li class="dropdown" th:if="${session.user != null}">
@@ -155,7 +157,34 @@
             </div>
         </div>
     </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="addStudents" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 400px">
+            <form class="modal-content" action="/teacherAddStudents" method="post" enctype="multipart/form-data">
 
+                <div  >
+                    <h3 style="text-align: center">使用Excel批量添加学生</h3>
+                    <hr>
+
+
+                    <div class="form-group" style="margin-left: 10px">
+                        <label for="file">文件*</label>
+                        <input type="file" class="form-control" id="excelFile" name="excelFile">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <a href="/download">点击下载Excel模板</a>
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="submit" class="btn btn-primary " style="width:70px;height:40px;">提交</button>
+
+                </div>
+            </form>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
     <!-- 模态框（Modal） -->
     <div class="modal fade" id="updateInfoImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width: 400px">
@@ -267,6 +296,7 @@
 </div><!-- /.modal -->
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="addCourse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
     <div class="modal-dialog"  style="width: 400px">
         <form class="modal-content" action="/addCourse" method="post" enctype="multipart/form-data">
             <div  >
@@ -310,7 +340,107 @@
         </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog"  style="width: 400px">
+        <div class="modal-content">
+
+            <div>
+                <h3 style="text-align: center">添加学生</h3>
+                <hr>
+
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="iName">姓名*</label>
+                    <span id="checkiName" class="error"> </span>
+                    <input type="text" class="form-control" style="width:300px;"
+                           name="iName"
+                           id="iName" placeholder="请输入姓名"  required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="iName">电话*</label>
+                    <span id="checkTel" class="error"> </span>
+                    <input type="text" class="form-control" style="width:300px;"
+                           name="tel"
+                           id="tel1" placeholder="请输入电话"  required />
+                </div>
+
+            </div>
+
+            <div  class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary "  style="width:70px;height:40px;" onclick="return addStudent()" >修改</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
     <script type="text/javascript">
+        function addStudent() {
+
+            document.getElementById("checkiName").innerHTML = "";
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            var iName = $("#iName").val();
+            var tel = $("#tel1").val();
+            document.getElementById("checkTel").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(tel)) {
+                alert("不能输入非数字字符");
+                document.getElementById("checkTel").innerHTML = "不能输入非数字字符";
+                return false;
+            }
+            if (iName == null||iName=="") {
+                alert("姓名不能为空!");
+                document.getElementById("checkiName").innerHTML = "姓名不能为空";
+                return false;
+            }
+            if (tel == null||tel=="") {
+                alert("电话不能为空!");
+                document.getElementById("checkTel").innerHTML = "电话不能为空";
+                return false;
+            }
+
+            if (!reg.test(iName)) {
+                document.getElementById("checkiName").innerHTML = "请输入正确姓名";
+                alert("请输入正确姓名");
+                return false;
+            }
+            var msg = "确定增加此学生？";
+            if (confirm(msg)==true){
+                $.ajax({
+                    type : "POST",
+                    contentType: "application/json;charset=UTF-8",
+                    url : "/addStudent",
+                    data: JSON.stringify({
+                        "iname": iName,
+                        "tel":tel
+                    }),
+                    success : function(data) {
+                        if(data.type == 1){
+                            alert("请输入正确姓名！");
+                            window.location.reload();
+                        }
+                        if(data.type == 0){
+                            window.location.reload();
+                        }
+                        if(data.type == 2){
+                            alert("该学生已经存在！");
+                            window.location.reload();
+                        }
+                    },
+                    error : function(data) {
+
+                        alert("添加失败!")
+                        window.location.reload();
+
+                    }
+                });
+                return true;
+            }else{
+                return false;
+            }
+        }
         function checkPassword()
         {
             var userPwd = $("#password2").val();
