@@ -35,8 +35,8 @@
                 </div>
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
-            <ul class="nav navbar-nav navbar-right" th:if="${session.user.userType == 0 || session.user.userType == 2}">
-
+            <ul class="nav navbar-nav navbar-right" >
+                <li><a  th:href="@{'/downloadTeacherStudents/'+${course.id}}" style="font-size: 20px;margin-top: 6px;">导出本课程学生上课情况表</a></li>
             </ul>
         </div>
     </div>

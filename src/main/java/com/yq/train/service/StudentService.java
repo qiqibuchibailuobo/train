@@ -203,7 +203,7 @@ public class StudentService {
     }
 
     @Transactional(readOnly = false,rollbackFor = Exception.class)
-    public boolean batchImport(String fileName, MultipartFile file, Teacher teacher, Model model) throws Exception {
+    public Model batchImport(String fileName, MultipartFile file, Teacher teacher, Model model) throws Exception {
 
         boolean notNull = false;
         List<Student> studentList = new ArrayList<>();
@@ -242,13 +242,14 @@ public class StudentService {
             student = new Student();
 
             if( row.getCell(0).getCellType() !=1){//循环时，得到每一行的单元格进行判断
-
+                model.addAttribute("msg","文件格式不正确");
                 throw new CustomizeException(CustomizeErrorCode.NOT_FORMAT);
             }
 
             String studentdepartments = row.getCell(0).getStringCellValue();//得到每一行第一个单元格的值
 
             if(studentdepartments == null || studentdepartments.isEmpty()|| !checkStudentName(studentdepartments)){//判断是否为空
+                model.addAttribute("msg","输入正确姓名");
                 throw new CustomizeException(CustomizeErrorCode.NOT_Chinese);
             }
 
@@ -257,7 +258,7 @@ public class StudentService {
             String studentTel = row.getCell(1).getStringCellValue();
 
             if(studentTel==null || studentTel.isEmpty()||!isNumeric(studentTel)){
-
+                model.addAttribute("msg","输入正确电话");
                 throw new CustomizeException(CustomizeErrorCode.NOT_NUMBER);
 
             }
@@ -312,9 +313,10 @@ public class StudentService {
             } else {
                 studentMapper.updateByPrimaryKeySelective(userResord); //如果有此条信息则更新操作
                 System.out.println(" 更新 "+userResord);
+
             }
         }
-        return notNull;
+        return model;
     }
     public static boolean isNumeric(String str){
         for (int i = str.length();--i>=0;){
