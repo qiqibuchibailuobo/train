@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
-    <title th:text="${course.courseDescribe}"></title>
+    <title th:text="${session.user.iName}"></title>
     <!--<link rel="stylesheet" th:href="@{/static/css/bootstrap.css}"/>-->
     <!--<link rel="stylesheet" th:href="@{/static/css/bootstrap-theme.min.css}"/>-->
     <!--<link rel="stylesheet" th:href="@{/static/css/community.css}"/>-->
@@ -29,85 +29,114 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form class="navbar-form navbar-left" th:action="@{'/course/'+${course.id}+'/students/'+${session.user.userType}}" method="get">
+            <form class="navbar-form navbar-left" th:action="@{'/allStudents/'+${session.user.userType}}" method="get">
                 <div class="form-group">
                     <input type="text" class="form-control" name="search"  placeholder="搜尼玛呢">
                 </div>
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
-            <ul class="nav navbar-nav navbar-right" >
-                <li><a  th:href="@{'/downloadTeacherStudents/'+${course.id}}" style="font-size: 20px;margin-top: 6px;">导出本课程学生上课情况表</a></li>
+            <ul class="nav navbar-nav navbar-right" th:if="${session.user.userType == 0 || session.user.userType == 2}">
+
             </ul>
         </div>
     </div>
 </nav>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>本课学生上课信息</h2>
-            <div style="margin-left: 80%;margin-bottom: 10px">
-                <button class="btn btn-success btn-md" type="button"
-                        id="appointmentButton" onclick="return appointmentStudent()" >预约</button>
-                <button class="btn btn-info btn-md" type="button"
-                        id="unAppointmentButton" onclick="return unAppointmentStudent()" >取消预约</button>
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+
+            <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>所有学生</h2>
+
+            <div style="margin-bottom: 10px">
+                <input type="checkbox" id="selectAll" name="selectAll" />
+                勾上全选
                 <button class="btn btn-danger btn-md" type="button"
-                        id="deleteButton" onclick="return deleteStudent()" >移除本课程</button>
-            </div>
+                        id="addStudentIntoCourseButton" onclick="return adminDeleteStudent()" >删除学生</button>
+                <!--<input type="hidden" th:value="${student.student.id}" style="width:300px;" id="courseId" name="courseId" readonly  unselectable="on" />-->
 
-            <table class="table table-hover" id="myTable">
-                <tr>
-                    <th><input type="checkbox" id="selectAll" name="selectAll" /></th>
-                    <th>学生姓名</th>
-                    <th>教师姓名</th>
-                    <th>课程名称</th>
-                    <th>剩余课时</th>
-                    <th>上课时间</th>
-                    <th>预约状态</th>
-                    <th>修改剩余课时</th>
-                </tr>
-                <tr th:each="studentInfo:${pagination.data}">
-                   <td><input type="checkbox" class="checkb" name="chooseInfo" id="chooseInfo" th:value="${studentInfo.studentId}"/></td>
-                    <td th:text="${studentInfo.studentName}"></td>
-                    <td th:text="${studentInfo.teacherName}"></td>
-                    <td th:text="${studentInfo.courseName}"></td>
-                    <td  id="remnantCourse1" ><label th:text="${studentInfo.remnantCourse}"></label></td>
-                    <td th:text="${studentInfo.classTime}"></td>
-                    <td th:text="${studentInfo.status}" th:if="${studentInfo.status == '已预约'}" ></td>
-                    <td th:text="${studentInfo.status}" th:if="${studentInfo.status == '未预约'}" style="color: red"></td>
-                    <td><input style="margin-top:-7px" class="btn btn-primary btn-md" type="button" onclick="openAddModal(this)" value="修改"></input></td>
-                </tr>
-            </table>
+            </div>
+            <div class="media" th:each="student:${pagination.data}">
+                <input type="checkbox" style="float: left;margin-right: 10px" class="checkb" name="chooseInfo" id="chooseInfo" th:value="${student.student.id}"/>
+                学生编号:<span th:text="${student.student.id}" style="margin-right: 10px"></span>
+                <div class="media-left">
+
+
+                    <img class="media-object img-rounded"
+                         style="width:40px;height: 40px;"
+                         th:src="@{'http://localhost:8080/test/'+${student.student.headportraitUrl}}"
+                         alt="头像">
+
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        <a th:href="@{'/adminStudent/'+${student.student.id}}" th:text="${student.student.iName}"></a>
+                    </h4>
+                    <!--<span th:text="${question.description}"></span><br>-->
+                    电话：<span class="text-desc"><span th:text="${student.student.tel}"></span></span>
+
+                </div>
+            </div>
+            <!--<div th:each="student:${pagination.data}" style="float:left;margin-right: 25px">-->
+                <!--<dl >-->
+                    <!--<dt >-->
+                            <!--<img  class="courseImage" th:src="@{'http://localhost:8080/test/'+${student.headportraitUrl}}">-->
+
+                    <!--</dt>-->
+                    <!--<dd class="indexCourseName" th:text="${student.iName}"></dd>-->
+                    <!--<dd class="indexTeacherName"  th:text="${student.tel}"></dd>-->
+                <!--</dl>-->
+
+                <!--<div style="clear:both;"></div>-->
+            <!--</div>-->
             <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
-            <a href="/teacher" style="margin-left: 83%" th:if="${session.user.userType == 2}">返回教师页面</a>
 
-            <!--<nav aria-label="Page navigation">-->
-                <!--<ul class="pagination">-->
-                    <!--<li th:if="${pagination.showFirstPage}">-->
-                        <!--<a  th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}/(page=1,search=${search})}" aria-label="Previous">-->
-                            <!--<span aria-hidden="true">&lt;&lt;</span>-->
-                        <!--</a>-->
-                    <!--</li>-->
-                    <!--<li th:if="${pagination.showPrevious}">-->
-                        <!--<a th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}/(page=${pagination.page - 1},search=${search})}" aria-label="Previous">-->
-                            <!--<span aria-hidden="true">&lt;</span>-->
-                        <!--</a>-->
-                    <!--</li>-->
-                    <!--<li th:each="page:${pagination.pages}" th:class="${pagination.page == page}? 'active' : ' '"><a-->
-                            <!--th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}/(page=${page},search=${search})}" th:text="${page}"></a></li>-->
-                    <!--<li th:if="${pagination.showNext}">-->
-                        <!--<a th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}/(page=${pagination.page + 1},search=${search})}" aria-label="Next">-->
-                            <!--<span aria-hidden="true">&gt;</span>-->
-                        <!--</a>-->
-                    <!--</li>-->
-                    <!--<li th:if="${pagination.showEndPage}">-->
-                        <!--<a th:href="@{'/course/'+${course.id}+'/students/'+${session.user.userType}/(page=${pagination.totalPage},search=${search})}" aria-label="Next">-->
-                            <!--<span aria-hidden="true">&gt;&gt;</span>-->
-                        <!--</a>-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</nav>-->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:if="${pagination.showFirstPage}">
+                        <a  th:href="@{/allStudents/{userType}/(page=1,search=${search},userType=${session.user.userType})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showPrevious}">
+                        <a th:href="@{/allStudents/{userType}/(page=${pagination.page - 1},search=${search},userType=${session.user.userType})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page:${pagination.pages}" th:class="${pagination.page == page}? 'active' : ' '"><a
+                            th:href="@{/allStudents/{userType}/(page=${page},search=${search},userType=${session.user.userType})}" th:text="${page}"></a></li>
+                    <li th:if="${pagination.showNext}">
+                        <a th:href="@{/allStudents/{userType}/(page=${pagination.page + 1},search=${search},userType=${session.user.userType})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showEndPage}">
+                        <a th:href="@{/allStudents/{userType}/(page=${pagination.totalPage},search=${search},userType=${session.user.userType})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
             </div>
-
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <div style="font-size: 30px" th:if="${session.user != null}">
+                <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
+                <a href="/student" th:if="${session.user.userType == 1}">返回学生页面</a>
+                <a href="/teacher" th:if="${session.user.userType == 2}">返回教师页面</a>
+            </div>
+            <h3>好好学习</h3>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上 <br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+            <h4>天天向上<br></h4>
+        </div>
         </div>
 
     </div>
@@ -133,15 +162,14 @@
                 <button type="button" class="btn btn-default"
                         data-dismiss="modal">关闭
                 </button>
-                <button type="button" class="btn btn-primary "  style="width:70px;height:40px;"  onclick="return updateremnantCourse()" >修改</button>
+                <button type="button" class="btn btn-primary "  style="width:70px;height:40px;"  onclick="updateremnantCourse()" >修改</button>
 
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <script language="javascript">
-
-    function deleteStudent() {
+    function adminDeleteStudent() {
         var str="";
         var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
         var courseId = $("#courseId").val();
@@ -153,12 +181,12 @@
             alert("请至少选择一名学生");
             return false;
         }
-        var msg = "确定将这些学生移除本课堂？";
+        var msg = "确定将这些学生移除？";
         if (confirm(msg)==true){
             $.ajax({
                 type : "POST",
                 contentType: "application/json;charset=UTF-8",
-                url : "/studentDeletes",
+                url : "/deleteStudent",
                 data: JSON.stringify({
                     "ids": str
                 }),
@@ -176,7 +204,8 @@
             return false;
         }
     }
-    function appointmentStudent() {
+
+    function addStudentIntoCourse() {
         var str="";
         var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
         var courseId = $("#courseId").val();
@@ -188,20 +217,21 @@
             alert("请至少选择一名学生");
             return false;
         }
-        var msg = "确定将这些学生预约本课堂？";
+        var msg = "确定将这些学生加入本课堂？";
         if (confirm(msg)==true){
             $.ajax({
                 type : "POST",
                 contentType: "application/json;charset=UTF-8",
-                url : "/appointmentStudent",
+                url : "/addStudentIntoCourse",
                 data: JSON.stringify({
-                    "ids": str
+                    "ids": str,
+                    "courseId":courseId
                 }),
                 success : function(data) {
                     window.location.reload();
                 },
                 error : function(data) {
-                    alert("预约失败!")
+                    alert("加入失败!")
                     window.location.reload();
 
                 }
@@ -211,41 +241,7 @@
             return false;
         }
     }
-    function unAppointmentStudent() {
-        var str="";
-        var sel=document.getElementsByName("chooseInfo");//获取checkbox的值
-        var courseId = $("#courseId").val();
-        for( var i=0;i<sel.length;i++){
-            if(sel[i].checked==true)
-                str+=sel[i].value+",";
-        }
-        if(str==""){
-            alert("请至少选择一名学生");
-            return false;
-        }
-        var msg = "确定将这些学生取消预约本课堂？";
-        if (confirm(msg)==true){
-            $.ajax({
-                type : "POST",
-                contentType: "application/json;charset=UTF-8",
-                url : "/unAppointmentStudent",
-                data: JSON.stringify({
-                    "ids": str
-                }),
-                success : function(data) {
-                    window.location.reload();
-                },
-                error : function(data) {
-                    alert("取消预约失败!")
-                    window.location.reload();
 
-                }
-            });
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     function openAddModal(node) {
         $("#updateRemnantCourse").modal('show');
@@ -269,7 +265,6 @@
         var expr = /\D/i;
         if (expr.test(remnantCourse)) {
             alert("不能输入非数字字符");
-            return false;
         }else {
             $.ajax({
                 type : "POST",
@@ -289,7 +284,6 @@
                     }
                 }
             });
-            return true;
         }
     }
 </script>

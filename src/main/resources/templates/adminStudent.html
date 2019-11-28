@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${student.classInfoDTO.studentName}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+    <script src="/js/vue.min.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:if="${session.user.userType == 0}">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">培训管理系统</span>
+                </button>
+                <a class="navbar-brand" href="/">培训管理系统</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+                <ul class="nav navbar-nav navbar-right"
+                    th:if="${session.user.userType == 0 || session.user.userType == 2}">
+                    <li>
+                        <a data-toggle="modal" data-target="#updateStudentInfo">修改学生信息</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid main">
+        <div class="row">
+            <div style="" >
+                <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>课程
+                </h2>
+
+
+                <hr>
+                <div style="display: flex;font-size: 29px">
+                    <div style="margin-right: 40px">
+                        <label>学生编号</label>
+                        <p th:text="${student.student.id}"></p>
+                    </div>
+                    <div style="display: flex;font-size: 29px">
+                        <div style="margin-right: 40px">
+                            <label>学生姓名</label>
+                            <p th:text="${student.student.iName}"></p>
+                        </div>
+                        <div style="margin-right: 40px">
+                            <label>电话</label>
+                            <p th:text="${student.student.tel}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex;font-size: 29px;margin-top: 20px">
+                    <div style="margin-right: 40px">
+                        <label>学生姓名</label>
+                        <p th:text="${student.classInfoDTO.studentName}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>教师姓名</label>
+                        <p th:text="${student.classInfoDTO.teacherName}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>课程名称</label>
+                        <p th:text="${student.classInfoDTO.courseName}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>上课时间</label>
+                        <p th:text="${student.classInfoDTO.classTime}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>剩余课时</label>
+                        <p th:text="${student.classInfoDTO.remnantCourse}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>预约状态</label>
+                        <p th:text="${student.classInfoDTO.status}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="updateStudentInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width: 400px">
+                <div class="modal-content">
+
+                    <div>
+                        <h3 style="text-align: center">修改信息</h3>
+                        <hr>
+                        <div class="form-group" style="margin-left: 10px">
+                            <!--<label th:text="${course.teachingId}" name="teachingId"></label>-->
+                            <input type="hidden" th:value="${student.student.id}" style="width:300px;" name="studentId"
+                                   id="studentid" readonly unselectable="on"/>
+                        </div>
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="iName1">姓名*</label>
+                            <span id="user" class="error"> </span>
+                            <input type="text" class="form-control" style="width:300px;"
+                                   id="iName1" th:value="${student.student.iName}" onblur='isChn1()'/>
+                        </div>
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="tel">电话*</label>
+                            <span id="phone" class="error"> </span>
+                            <input style="width: 300px" type="text" class="form-control"
+                                   id="tel" placeholder="电话" th:value="${student.student.tel}"
+                                   onblur='checkPhoneNumber1()' required/>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary " style="width:70px;height:40px;"
+                                onclick="return updateInfo()">修改
+                        </button>
+
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="updateInfoPwd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width: 400px">
+                <div class="modal-content">
+
+                    <div>
+                        <h3 style="text-align: center">修改密码</h3>
+                        <hr>
+
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="password">旧密码*</label>
+                            <span id="psword" class="error"> </span>
+                            <input type="password" class="form-control" style="width:300px;"
+                                   name="password"
+                                   id="password" placeholder="旧密码" required/>
+                        </div>
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="password">新密码*</label>
+                            <span id="psword2" class="error"> </span>
+                            <input type="password" class="form-control" style="width:300px;"
+                                   name="password"
+                                   id="password2" placeholder="新密码" onblur='checkPassword()' required/>
+                        </div>
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="password">确认密码*</label>
+                            <span id="psword3" class="error"> </span>
+                            <input type="password" class="form-control" style="width:300px;"
+                                   name="password"
+                                   id="password3" placeholder="确认密码" onblur='checkPassword2()' required/>
+                        </div>
+
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary " style="width:70px;height:40px;"
+                                onclick="updateInfoPwd()">修改
+                        </button>
+
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+    <div th:if="${session.user.userType != 0}">
+        <h1>您不是管理员!</h1>
+        <p><a class="btn btn-primary btn-lg" href="/" role="button">返回主页面</a></p>
+
+    </div>
+    <script>
+        function checkPassword() {
+            var userPwd = $("#password2").val();
+            document.getElementById("psword2").innerHTML = "";
+            if (userPwd.length > 10) {
+                //alert("输入的用户名过长");
+                document.getElementById("psword2").innerHTML = "密码太长";
+
+            }
+            if (userPwd.length <= 4) {
+                //alert("请输入大于4位小于10位的密码");
+                document.getElementById("psword2").innerHTML = "密码太短";
+
+            }
+        }
+
+        function checkPassword2() {
+
+            var userPwd = $("#password2").val();
+            var userPwd2 = $("#password3").val();
+            document.getElementById("psword3").innerHTML = "";
+            if (userPwd != "") {
+                if (userPwd != userPwd2) {
+                    //alert("密码不一致");
+                    document.getElementById("psword3").innerHTML = "密码不一致";
+
+                }
+            } else document.getElementById("psword3").innerHTML = "密码为空";
+
+        }
+
+        function chekStudentInfo() {
+            var username = $.trim($("#iName1").attr("value"));
+            var tel = $("#tel").val();
+            document.getElementById("phone").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(tel)) {
+                alert("不能输入非数字字符");
+                document.getElementById("phone").innerHTML = "不能输入非数字字符";
+                return false;
+            }
+            document.getElementById("user").innerHTML = "";
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            if (!reg.test(username)) {
+                document.getElementById("user").innerHTML = "请输入正确姓名";
+                alert("请输入正确姓名");
+                return false;
+            }
+            if (isEmpty(username)) {
+                alert("username不能为空。");
+
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function isChn1() {
+            document.getElementById("user").innerHTML = "";
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            var iName = $("#iName1").val();
+            if (!reg.test(iName)) {
+                document.getElementById("user").innerHTML = "请输入正确姓名";
+                //alert("请输入正确姓名");
+            }
+        }
+
+        function checkPhoneNumber1() {
+            var tel = $("#tel").val();
+            document.getElementById("phone").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(tel)) {
+                // alert("不能输入非数字字符");
+                document.getElementById("phone").innerHTML = "不能输入非数字字符";
+
+            }
+
+        }
+
+        function updateInfo() {
+            var iName = $("#iName1").val();
+            var tel = $("#tel").val();
+            var id = $("#studentid").val();
+            document.getElementById("phone").innerHTML = "";
+            var expr = /\D/i;
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            if (!reg.test(iName)) {
+                //document.getElementById("user").innerHTML = "请输入正确姓名";
+                alert("请输入正确姓名");
+                return false;
+            } else if (expr.test(tel)) {
+                alert("不能输入非数字字符");
+                return false;
+                //document.getElementById("phone").innerHTML = "不能输入非数字字符";
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/adminStudentUpdateInfo",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "id": id,
+                        "iname": iName,
+                        "tel": tel
+                    }),
+                    success: function (data) {
+                        if (data.type == 1) {
+                            alert("修改成功！");
+                            location.reload();
+                        }
+                        if (data.type == 0) {
+                            alert("姓名不能为空！")
+                        }
+                        if (data.type == 2) {
+                            alert("请输入正确姓名！")
+                        }
+                    }
+                });
+                return true;
+            }
+
+        }
+
+        function updateInfoPwd() {
+            var userPwd = $("#password").val();
+            var userPwd2 = $("#password2").val();
+            var userPwd3 = $("#password3").val();
+
+            if (userPwd2.length > 10) {
+                alert("输入的用户名过长");
+                // document.getElementById("psword2").innerHTML = "输入的用户名过长";
+
+
+            }
+            if (userPwd.length <= 4) {
+                alert("请输入大于4位小于10位的密码");
+                //document.getElementById("psword2").innerHTML = "请输入大于4位小于10位的密码";
+
+            }
+
+            if (userPwd2 != "") {
+                if (userPwd2 != userPwd3) {
+                    alert("密码不一致");
+                    //document.getElementById("psword3").innerHTML="密码不一致";
+
+                }
+            } else alert("密码为空");
+            $.ajax({
+                type: "POST",
+                url: "/studentUpdateInfoPwd",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "userPwd": userPwd,
+                    "userPwd2": userPwd2,
+                    "userPwd3": userPwd3
+                }),
+                success: function (data) {
+                    if (data.type == 3) {
+                        alert("修改成功！")
+                        location.reload();
+                    }
+                    if (data.type == 2) {
+                        alert("两次输入密码不一致！");
+                    }
+                    if (data.type == 1) {
+                        alert("旧密码错误！");
+                    }
+                    if (data.type == 0) {
+                        alert("信息不能为空！");
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

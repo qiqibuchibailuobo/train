@@ -14,13 +14,14 @@
 </head>
 <body>
 <div th:if="${session.user.userType == 0}">
-    <div >
+    <div>
 
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">培训管理系统</span>
                     </button>
                     <a class="navbar-brand" href="/">培训管理系统</a>
@@ -30,16 +31,23 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <form class="navbar-form navbar-left" action="/" method="get">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="search"  placeholder="搜尼玛呢">
+                            <input type="text" class="form-control" name="search" placeholder="搜尼玛呢">
                         </div>
                         <button type="submit" class="btn btn-default">搜索</button>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a data-toggle="modal" data-target="#addStudent" style="font-size: 20px;margin-top: 6px;">添加单个学生</a>
+                        </li>
+                        <li><a data-toggle="modal" data-target="#addStudents" style="font-size: 20px;margin-top: 6px;">Excel批量添加学生</a></li>
                         <!--<li><a href="/profile/replies">通知  <span class="badge" th:text="${session.unreadCount}"></span></a></li>-->
-
+                        <li>
+                            <a th:href="@{'/allStudents/'+${session.user.userType}}" style="font-size: 20px;margin-top: 6px;">查看所有学生</a>
+                        </li>
                         <li class="dropdown" th:if="${session.user != null}">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
-                                <img  th:src="@{'http://localhost:8080/test/'+${session.user.headportraitUrl}}" style="width: 30px">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                <img th:src="@{'http://localhost:8080/test/'+${session.user.headportraitUrl}}"
+                                     style="width: 30px">
                                 <span th:text="${session.user.iName}"></span>
                                 <span class="caret"></span>
                             </a>
@@ -49,7 +57,8 @@
                             </ul>
                         </li>
                         <li th:if="${session.user == null}">
-                            <button class="btn  btn-lg" data-toggle="modal" data-target="#myModal" style="background-color: white;color: #777777">
+                            <button class="btn  btn-lg" data-toggle="modal" data-target="#myModal"
+                                    style="background-color: white;color: #777777">
                                 登录
                             </button>
                         </li>
@@ -87,59 +96,67 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-
         <!-- 模态框（Modal） -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog"  style="width: 400px">
-                <div class="modal-content">
+        <div class="modal fade" id="addStudents" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 400px">
+                <form class="modal-content" action="/adminAddStudents" method="post" enctype="multipart/form-data">
 
-                    <div>
-                        <h3 style="text-align: center">请登录</h3>
+                    <div  >
+                        <h3 style="text-align: center">使用Excel批量添加学生</h3>
                         <hr>
+
+
                         <div class="form-group" style="margin-left: 10px">
-                            <label for="username">用户名*</label>
-                            <span id="user"  class="error"> </span>
-                            <input style="width: 300px" type="text" class="form-control"  name="username"
-                                   id="username" placeholder="用户名" onblur='checkName()' required />
+                            <label >文件*</label>
+                            <input type="file" class="form-control" id="excelFile" name="excelFile">
                         </div>
-                        <div class="form-group" style="margin-left: 10px">
-                            <label for="password">密码*</label>
-                            <span id="psword" class="error"> </span>
-
-                            <input type="password" class="form-control" style="width:300px;"
-                                   name="password"
-                                   id="password" placeholder="密码" onblur='checkPassword()' required />
-
-                        </div>
-                        <div class="checkbox" style="margin-left: 10px">
-                            <label>
-                                <span><input type="checkbox" value='true' style="width:15px;height:15px;" > 记住我</span>
-
-                            </label>
-                        </div>
-                        <div >
-                            <div >
-                                <div style="margin-left: 10px">
-                                    <label >验证码*</label>
-                                    <input style="width:300px;" type="tel" class="form-control" id="verifyInput" placeholder="请输入验证码" maxlength="4">
-                                </div>
-                            </div>
-                            <div >
-                                <a href="javascript:void(0);" title="点击更换验证码">
-                                    <img id="imgVerify" src="/getVerify" alt="更换验证码" height="36" width="170" onclick="getVerify(this);">
-                                </a>
-                            </div>
-                            <!--<input type="button" onclick="aVerify()" value="提交">-->
-                        </div>
-                        <p class="text-success"  style="margin-left: 10px"><a href="/register">>>还没账号？去注册</a></p>
-
                     </div>
 
-                    <div  class="modal-footer">
+                    <div class="modal-footer">
+                        <a href="/download">点击下载Excel模板</a>
                         <button type="button" class="btn btn-default"
                                 data-dismiss="modal">关闭
                         </button>
-                        <button type="button" class="btn btn-primary "  style="width:70px;height:40px;" onclick="post(event)" >登录</button>
+                        <button type="submit" class="btn btn-primary " style="width:70px;height:40px;">提交</button>
+
+                    </div>
+                </form>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+        <div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width: 400px">
+                <div class="modal-content">
+
+                    <div>
+                        <h3 style="text-align: center">添加学生</h3>
+                        <hr>
+
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="iName">姓名*</label>
+                            <span id="checkiName" class="error"> </span>
+                            <input type="text" class="form-control" style="width:300px;"
+                                   name="iName"
+                                   id="iName" placeholder="请输入姓名" required/>
+                        </div>
+                        <div class="form-group" style="margin-left: 10px">
+                            <label for="iName">电话*</label>
+                            <span id="checkTel" class="error"> </span>
+                            <input type="text" class="form-control" style="width:300px;"
+                                   name="tel"
+                                   id="tel1" placeholder="请输入电话" required/>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary " style="width:70px;height:40px;"
+                                onclick="return addStudent()">修改
+                        </button>
 
                     </div>
                 </div><!-- /.modal-content -->
@@ -147,18 +164,83 @@
         </div><!-- /.modal -->
 
         <script type="text/javascript">
+            function addStudent() {
 
-            var checkName=function() {
-                document.getElementById("user").innerHTML ="";
+                document.getElementById("checkiName").innerHTML = "";
+                var reg = /^[\u4E00-\u9FA5]+$/;
+                var iName = $("#iName").val();
+                var tel = $("#tel1").val();
+                document.getElementById("checkTel").innerHTML = "";
+
+                var expr = /\D/i;
+                if (expr.test(tel)) {
+                    alert("不能输入非数字字符");
+                    document.getElementById("checkTel").innerHTML = "不能输入非数字字符";
+                    return false;
+                }
+                if (iName == null || iName == "") {
+                    alert("姓名不能为空!");
+                    document.getElementById("checkiName").innerHTML = "姓名不能为空";
+                    return false;
+                }
+                if (tel == null || tel == "") {
+                    alert("电话不能为空!");
+                    document.getElementById("checkTel").innerHTML = "电话不能为空";
+                    return false;
+                }
+
+                if (!reg.test(iName)) {
+                    document.getElementById("checkiName").innerHTML = "请输入正确姓名";
+                    alert("请输入正确姓名");
+                    return false;
+                }
+                var msg = "确定增加此学生？";
+                if (confirm(msg) == true) {
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json;charset=UTF-8",
+                        url: "/adminAddStudent",
+                        data: JSON.stringify({
+                            "iname": iName,
+                            "tel": tel
+                        }),
+                        success: function (data) {
+                            if (data.type == 1) {
+                                alert("请输入正确姓名！");
+                                window.location.reload();
+                            }
+                            if (data.type == 0) {
+                                window.location.reload();
+                            }
+                            if (data.type == 2) {
+                                alert("该学生已经存在！");
+                                window.location.reload();
+                            }
+                        },
+                        error: function (data) {
+
+                            alert("添加失败!")
+                            window.location.reload();
+
+                        }
+                    });
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            var checkName = function () {
+                document.getElementById("user").innerHTML = "";
                 var name = eval(document.getElementById('username')).value;
                 if (name.length > 20 || name.length < 1)
-                    document.getElementById("user").innerHTML = "用户名长度在1-20之间！" ;
+                    document.getElementById("user").innerHTML = "用户名长度在1-20之间！";
             }
-            var checkPassword = function(){
-                document.getElementById("psword").innerHTML ="";
+            var checkPassword = function () {
+                document.getElementById("psword").innerHTML = "";
                 var name = eval(document.getElementById('password')).value;
                 if (name.length > 12 || name.length < 6)
-                    document.getElementById("psword").innerHTML="密码长度在6-12之间！" ;
+                    document.getElementById("psword").innerHTML = "密码长度在6-12之间！";
             }
 
             //获取验证码
@@ -179,30 +261,30 @@
                     data: JSON.stringify({
                         "username": username,
                         "password": password,
-                        "verifyInput":verifyInput
+                        "verifyInput": verifyInput
                     }),
                     success: function (data) {
-                        if(data.type<=2&&data.type>=0){
-                            if(data.verificationCode){
-                                if(data.type == 0){
+                        if (data.type <= 2 && data.type >= 0) {
+                            if (data.verificationCode) {
+                                if (data.type == 0) {
                                     //alert(data.msg);
-                                    window.location.href="/admin";
+                                    window.location.href = "/admin";
                                 }
-                                if(data.type == 1){
-                                    window.location.href="/student";
+                                if (data.type == 1) {
+                                    window.location.href = "/student";
                                 }
-                                if(data.type == 2){
-                                    window.location.href="/teacher";
+                                if (data.type == 2) {
+                                    window.location.href = "/teacher";
                                 }
 
-                            }else {
+                            } else {
                                 alert("验证码错误!");
                             }
                         }
-                        if(data.type == 3){
-                            if(data.username == "" || data.password == ""){
+                        if (data.type == 3) {
+                            if (data.username == "" || data.password == "") {
                                 alert("账号或密码为空")
-                            }else {
+                            } else {
                                 alert(data.msg);
                             }
                         }
@@ -210,7 +292,7 @@
                         getVerify();
 
                     },
-                    error: function(err) {
+                    error: function (err) {
                         console.log(err);
                     },
                 });
@@ -222,11 +304,12 @@
     <div class="container-fluid main">
         <div class="row">
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>课程</h2>
+                <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>课程
+                </h2>
                 <nav aria-label="Page navigation" style="display:inline-block;margin-left: 75%">
                     <ul class="pagination" style="margin-bottom: -10px">
                         <li th:if="${pagination.showFirstPage}">
-                            <a  th:href="@{/admin/(page=1,search=${search})}" aria-label="Previous">
+                            <a th:href="@{/admin/(page=1,search=${search})}" aria-label="Previous">
                                 <span aria-hidden="true">&lt;&lt;</span>
                             </a>
                         </li>
@@ -252,14 +335,16 @@
 
                 <hr>
                 <div th:each="course:${pagination.data}" style="float:left;margin-right: 25px">
-                    <dl >
-                        <dt ><a th:href="@{'/course/'+${course.id}}">
-                            <img  class="courseImage" th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}">
+                    <dl>
+                        <dt><a th:href="@{'/course/'+${course.id}}">
+                            <img class="courseImage"
+                                 th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}">
                         </a>
 
                         </dt>
-                        <dd ><a th:href="@{'/course/'+${course.id}}" class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
-                        <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
+                        <dd><a th:href="@{'/course/'+${course.id}}" class="indexCourseName"
+                               th:text="${course.courseDescribe}"></a></dd>
+                        <dd class="indexTeacherName" th:text="${course.teacher.iName}"></dd>
                     </dl>
 
                     <div style="clear:both;"></div>

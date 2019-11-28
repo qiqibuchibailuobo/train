@@ -68,7 +68,7 @@
                 </p>
 
 
-                <div style="font-size: 25px;display: flex;margin-bottom: 40px">
+                <div style="font-size: 22px;display: flex;margin-bottom: 40px">
                     <div style="margin-right: 40px">
                         教师：<span  th:text="${course.teacher.iName}"></span>
                     </div>
@@ -80,6 +80,9 @@
                     </div>
                     <div style="margin-right: 40px">
                         上课时间： <span  th:text="${course.classTime}"></span>
+                    </div>
+                    <div style="margin-right: 40px">
+                        学生人数： <span  th:text="${course.studentCount}"></span>
                     </div>
                     <a href="/admin" th:if="${session.user.userType == 0}">返回管理员页面</a>
                     <a href="/student" th:if="${session.user.userType == 1}">返回学生页面</a>

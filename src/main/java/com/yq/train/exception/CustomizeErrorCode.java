@@ -8,7 +8,7 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     NO_iNAME(2005,"用户名不能为空"),
     COMMENT_NOT_FOUND(2006,"你回复的评论不存在了要不换个试试"),
     COMMENT_IS_EMPTY(2007,"输入内容不能为空"),
-    READ_NOTIFICATION_FAIL(2008,"无法阅读别人的信息"),
+    NOT_STUDENT(2008,"学生不见了"),
     NOTIFICATION_NOT_FOUND(2009,"消息不见了" +
             ""),
     NOT_NUMBER(2010,"请输入数字！"),

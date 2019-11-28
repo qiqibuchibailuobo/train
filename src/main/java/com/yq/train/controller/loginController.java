@@ -151,19 +151,7 @@ public class loginController {
     }
 
 
-    @GetMapping("/admin")
-    public String loginAdmin(Model model,
-            @RequestParam(name = "page",defaultValue = "1") Integer page,
-            @RequestParam(name = "size",defaultValue = "6") Integer size ,
-            @RequestParam(name = "search",required = false) String  search){
-        if(search == ""){
-            search = null;
-        }
-        PaginationDTO pagination = courseService.list(search,page,size);
-        model.addAttribute("pagination",pagination);
-        model.addAttribute("search",search);
-        return "admin";
-    }
+
     @GetMapping("/logout")
     public String logout(HttpServletRequest request){
         request.getSession().removeAttribute("user");

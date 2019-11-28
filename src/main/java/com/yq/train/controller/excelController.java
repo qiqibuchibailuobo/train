@@ -72,7 +72,32 @@ public class excelController {
         //return "redirect:/teacher";   //这里需要修改，此处存在bug
     }
 
+    @RequestMapping(value = "/adminAddStudents", method = RequestMethod.POST)
+    public Object adminAddStudents(MultipartFile excelFile, Model model) throws IOException {
 
+        boolean a = false;
+        String fileName = excelFile.getOriginalFilename();
+
+        try {
+            model = studentService.adminbatchImport(fileName, excelFile, model);
+            return "redirect:/admin";
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (model.getAttribute("msg")=="文件格式不正确"||model.getAttribute("msg").equals("文件格式不正确")) {
+                model.addAttribute("message", "文件格式错误或文件数据为空！");
+                return "error";
+            }else if(model.getAttribute("msg")=="输入正确姓名"||model.getAttribute("msg").equals("输入正确姓名")){
+                model.addAttribute("message", "核对表格，请输入正确姓名！");
+                return "error";
+            }else if(model.getAttribute("msg")=="输入正确电话"||model.getAttribute("msg").equals("输入正确电话")){
+                model.addAttribute("message", "核对表格，请输入正确电话！");
+                return "error";
+            }else {
+                return "error";
+            }
+        }
+        //return "redirect:/teacher";   //这里需要修改，此处存在bug
+    }
     @GetMapping("/download")   //此处尽量get请求,post不知为何有问题
     public void downLoadTemplate(HttpServletResponse response) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();

@@ -337,4 +337,120 @@ public class StudentService {
         }
         return true;
     }
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public Model adminbatchImport(String fileName, MultipartFile file,Model model) throws Exception {
+
+        boolean notNull = false;
+        List<Student> studentList = new ArrayList<>();
+        if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            model.addAttribute("msg","文件格式不正确");
+            throw new CustomizeException(CustomizeErrorCode.NOT_EXCEL);
+        }
+        boolean isExcel2003 = true;
+        if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            isExcel2003 = false;
+        }
+        InputStream is = file.getInputStream();
+        Workbook wb = null;
+        if (isExcel2003) {
+            wb = new HSSFWorkbook(is);
+        } else {
+            wb = new XSSFWorkbook(is);
+        }
+        Sheet sheet = wb.getSheetAt(0);
+        if(sheet!=null){
+            notNull = true;
+        }
+        Student student;
+        int num = sheet.getLastRowNum();
+        //System.out.println(num);
+        //总列数
+        int col = sheet.getRow(0).getLastCellNum();
+        for (int r = 1; r <= num; r++) {//r = 2 表示从第三行开始循环 如果你的第三行开始是数据
+            Row row = sheet.getRow(r);//通过sheet表单对象得到 行对象
+            if (row == null){
+                continue;
+            }
+
+            //sheet.getLastRowNum() 的值是 10，所以Excel表中的数据至少是10条；不然报错 NullPointerException
+
+            student = new Student();
+
+            if( row.getCell(0).getCellType() !=1){//循环时，得到每一行的单元格进行判断
+                model.addAttribute("msg","文件格式不正确");
+                throw new CustomizeException(CustomizeErrorCode.NOT_FORMAT);
+            }
+
+            String studentdepartments = row.getCell(0).getStringCellValue();//得到每一行第一个单元格的值
+
+            if(studentdepartments == null || studentdepartments.isEmpty()|| !checkStudentName(studentdepartments)){//判断是否为空
+                model.addAttribute("msg","输入正确姓名");
+                throw new CustomizeException(CustomizeErrorCode.NOT_Chinese);
+            }
+
+            row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);//得到每一行的 第二个单元格的值
+
+            String studentTel = row.getCell(1).getStringCellValue();
+
+            if(studentTel==null || studentTel.isEmpty()||!isNumeric(studentTel)){
+                model.addAttribute("msg","输入正确电话");
+                throw new CustomizeException(CustomizeErrorCode.NOT_NUMBER);
+
+            }
+
+            //完整的循环一次 就组成了一个对象
+            student.setiName(studentdepartments);
+            student.setUserName(studentdepartments);
+            student.setUserPwd("123456");
+            try {
+                int tel = Integer.parseInt(studentTel);
+                student.setTel(tel);
+            } catch (NumberFormatException e) {
+
+                e.printStackTrace();
+
+            }
+            student.setAddTeacher(0);
+            Date date = new Date();
+            student.setGmtCreate(date);
+            student.setGmtModified(date);
+            student.setHeadportraitUrl("nice.jpg");
+            student.setUserType(1);
+            student.setAddTeacher(0);
+
+
+            studentList.add(student);
+        }
+        for (Student userResord : studentList) {
+
+            StudentExample studentExample = new StudentExample();
+            studentExample.createCriteria()
+                    .andUserNameEqualTo(userResord.getiName());
+            List<Student> allstudent = studentMapper.selectByExample(studentExample);
+
+            int cnt = allstudent.size();  //根据学生学号查询是否有此条信息
+            if (cnt == 0) {
+                ClassInfo classInfo = new ClassInfo();
+
+                classInfo.setCourseId(0);
+                classInfo.setRemnantCourse(0);
+                classInfo.setStatus(0);
+                classInfo.setTeacherId(0);
+
+                studentMapper.insert(userResord);
+                studentExample.createCriteria()
+                        .andUserNameEqualTo(userResord.getiName());
+                List<Student> allstudents = studentMapper.selectByExample(studentExample);
+                Student student1 = allstudents.get(0);
+                classInfo.setStudentId(student1.getId());
+                classInfoMapper.insert(classInfo);  //如果没有此条信息则插入操作
+                System.out.println(" 插入 "+userResord);
+            } else {
+                studentMapper.updateByPrimaryKeySelective(userResord); //如果有此条信息则更新操作
+                System.out.println(" 更新 "+userResord);
+
+            }
+        }
+        return model;
+    }
 }
