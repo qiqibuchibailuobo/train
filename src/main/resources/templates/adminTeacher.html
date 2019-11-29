@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${session.user.iName}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+    <script src="/js/vue.min.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:if="${session.user.userType == 0}">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">培训管理系统</span>
+                </button>
+                <a class="navbar-brand" href="/">培训管理系统</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" action="/" method="get">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="search"  placeholder="搜尼玛呢">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a data-toggle="modal" data-target="#addCourse" style="font-size: 20px;margin-top: 6px;">添加课程信息</a></li>
+
+                    <li>
+                        <a data-toggle="modal" data-target="#updateStudentInfo" style="font-size: 20px;margin-top: 6px;">修改教师信息</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div id="myCarousel" class="carousel slide WheelPlanting" data-ride="carousel" data-interval="2000">
+        <!-- 轮播（Carousel）指标 -->
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ol>
+        <!-- 轮播（Carousel）项目 -->
+        <div class="carousel-inner">
+            <div class="item active">
+                <img src="/images/chuxinshiming.jpg" alt="First slide">
+            </div>
+            <div class="item">
+                <img src="/images/shuangjiang.jpg" alt="Second slide">
+            </div>
+            <div class="item">
+                <img src="/images/wohewodezuguowenyiwanhui.jpg" alt="Third slide">
+            </div>
+        </div>
+        <!-- 轮播（Carousel）导航 -->
+        <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+    <div class="container-fluid main">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                <h2 style="display: inline-block"><span class="glyphicon glyphicon-list" aria-hidden="true" ></span>教师信息</h2>
+                <nav aria-label="Page navigation" style="display:inline-block;margin-left: 70%">
+                    <ul class="pagination" style="margin-bottom: -10px">
+                        <li th:if="${pagination1.showFirstPage}">
+                            <a  th:href="@{/adminTeachers/{id}/(id=${teacher.id},page1=1,search1=${search1})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;&lt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagination1.showPrevious}">
+                            <a th:href="@{/adminTeachers/{id}/(id=${teacher.id},page1=${pagination1.page - 1},search1=${search1})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+
+                        <li th:each="page1:${pagination1.pages}" th:class="${pagination1.page == page1}? 'active' : ' '"><a
+                                th:href="@{/adminTeachers/{id}/(id=${teacher.id},page1=${page1},search1=${search1})}" th:text="${page1}"></a></li>
+
+                        <li th:if="${pagination1.showNext}">
+                            <a th:href="@{/adminTeachers/{id}/(id=${teacher.id},page1=${pagination1.page + 1},search1=${search1})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagination1.showEndPage}">
+                            <a th:href="@{/adminTeachers/{id}/(id=${teacher.id},page1=${pagination1.totalPage},search1=${search1})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;&gt;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <hr>
+                <div style="display: flex;font-size: 29px">
+                    <div style="margin-right: 40px">
+                        <label>教师姓名</label>
+                        <p th:text="${teacher.iName}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>教师电话</label>
+                        <p th:text="${teacher.tel}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>教师描述</label>
+                        <p th:text="${teacher.teacherDescribe}"></p>
+                    </div>
+                    <div style="margin-right: 40px">
+                        <label>课程总数</label>
+                        <p th:text="${teacher.courseTotal}"></p>
+                    </div>
+
+                </div>
+                <div th:each="course:${pagination1.data}" th:if="${pagination1.data != null}" style="float:left;margin-right: 25px">
+                    <dl >
+                        <dt >
+                            <a th:href="@{'/course/'+${course.id}}">
+                                <img  class="courseImage" th:src="@{'http://localhost:8080/test/'+${course.headportraitUrl}}">
+                            </a>
+                        </dt>
+                        <dd ><a th:href="@{'/course/'+${course.id}}"  class="indexCourseName" th:text="${course.courseDescribe}" ></a></dd>
+                        <dd class="indexTeacherName"  th:text="${course.teacher.iName}"></dd>
+                    </dl>
+
+                    <div style="clear:both;"></div>
+                </div>
+
+
+            </div>
+            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                <h3>好好学习</h3>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上 <br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+                <h4>天天向上<br></h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateStudentInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 400px">
+            <div class="modal-content">
+
+                <div>
+                    <h3 style="text-align: center">修改信息</h3>
+                    <hr>
+                    <div class="form-group" style="margin-left: 10px">
+                        <!--<label th:text="${course.teachingId}" name="teachingId"></label>-->
+                        <input type="hidden" th:value="${teacher.id}" style="width:300px;" name="studentId"
+                               id="studentid" readonly unselectable="on"/>
+                    </div>
+                    <div class="form-group" style="margin-left: 10px">
+                        <label for="iName1">姓名*</label>
+                        <span id="user" class="error"> </span>
+                        <input type="text" class="form-control" style="width:300px;"
+                               id="iName1" th:value="${teacher.iName}" onblur='isChn1()'/>
+                    </div>
+                    <div class="form-group" style="margin-left: 10px">
+                        <label>描述*</label>
+                        <span id="userdescribe" class="error"> </span>
+                        <input type="text" class="form-control" style="width:300px;"
+                               id="describe" th:value="${teacher.teacherDescribe}"/>
+                    </div>
+                    <div class="form-group" style="margin-left: 10px">
+                        <label for="tel">电话*</label>
+                        <span id="phone" class="error"> </span>
+                        <input style="width: 300px" type="text" class="form-control"
+                               id="tel" placeholder="电话" th:value="${teacher.tel}"
+                               onblur='checkPhoneNumber1()' required/>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary " style="width:70px;height:40px;"
+                            onclick="return updateInfo()">修改
+                    </button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="addCourse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog"  style="width: 400px">
+        <form class="modal-content" action="/adminAddCourse" method="post" enctype="multipart/form-data">
+            <div  >
+                <h3 style="text-align: center">添加课程</h3>
+                <hr>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="courseDescribe">教师编号*</label>
+                    <input type="text" class="form-control" style="width:300px;"
+                          th:value="${teacher.id}" id="teacherId" name="teacherId" readonly  />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="courseDescribe">课程名称*</label>
+                    <input type="text" class="form-control" style="width:300px;"
+                           id="courseDescribe" name="courseDescribe" required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="price">课程价格*</label>
+                    <span id="pricechek" class="error"> </span>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="price"  name="price" onblur='checkPrice()' required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="classTime">上课时间*</label>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="classTime" name="classTime" required />
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label >课程图片*</label>
+                    <input type="file" class="form-control" style="width:300px;" id="file1" name="file1">
+                </div>
+                <div class="form-group" style="margin-left: 10px">
+                    <label for="price">课时*</label>
+                    <span id="classHourChek" class="error"> </span>
+                    <input style="width: 300px" type="text" class="form-control"
+                           id="classHour"  name="classHour" onblur='checkClassHour()' required />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <input type="submit" class="btn btn-primary"  style="width:70px;height:40px;"></input>
+                <span th:text="${msg}" style="color: red"></span>
+            </div>
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <script type="text/javascript">
+        function addStudent() {
+
+            document.getElementById("checkiName").innerHTML = "";
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            var iName = $("#iName").val();
+            var tel = $("#tel1").val();
+            document.getElementById("checkTel").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(tel)) {
+                alert("不能输入非数字字符");
+                document.getElementById("checkTel").innerHTML = "不能输入非数字字符";
+                return false;
+            }
+            if (iName == null||iName=="") {
+                alert("姓名不能为空!");
+                document.getElementById("checkiName").innerHTML = "姓名不能为空";
+                return false;
+            }
+            if (tel == null||tel=="") {
+                alert("电话不能为空!");
+                document.getElementById("checkTel").innerHTML = "电话不能为空";
+                return false;
+            }
+
+            if (!reg.test(iName)) {
+                document.getElementById("checkiName").innerHTML = "请输入正确姓名";
+                alert("请输入正确姓名");
+                return false;
+            }
+            var msg = "确定增加此学生？";
+            if (confirm(msg)==true){
+                $.ajax({
+                    type : "POST",
+                    contentType: "application/json;charset=UTF-8",
+                    url : "/addStudent",
+                    data: JSON.stringify({
+                        "iname": iName,
+                        "tel":tel
+                    }),
+                    success : function(data) {
+                        if(data.type == 1){
+                            alert("请输入正确姓名！");
+                            window.location.reload();
+                        }
+                        if(data.type == 0){
+                            window.location.reload();
+                        }
+                        if(data.type == 2){
+                            alert("该学生已经存在！");
+                            window.location.reload();
+                        }
+                    },
+                    error : function(data) {
+
+                        alert("添加失败!")
+                        window.location.reload();
+
+                    }
+                });
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        function checkClassHour() {
+            var price = $("#classHour").val();
+            document.getElementById("classHourChek").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(price)) {
+                // alert("不能输入非数字字符");
+                document.getElementById("classHourChek").innerHTML = "不能输入非数字字符";
+            }
+
+        }
+        function checkPrice() {
+            var price = $("#price").val();
+            document.getElementById("pricechek").innerHTML = "";
+
+            var expr = /\D/i;
+            if (expr.test(price)) {
+                // alert("不能输入非数字字符");
+                document.getElementById("pricechek").innerHTML = "不能输入非数字字符";
+
+            }
+
+        }
+        function updateInfo() {
+            var iName = $("#iName1").val();
+            var tel = $("#tel").val();
+            var id = $("#studentid").val();
+            var describe = $("#describe").val();
+            document.getElementById("phone").innerHTML = "";
+            var expr = /\D/i;
+            var reg = /^[\u4E00-\u9FA5]+$/;
+            if (!reg.test(iName)) {
+                //document.getElementById("user").innerHTML = "请输入正确姓名";
+                alert("请输入正确姓名");
+                return false;
+            } else if (expr.test(tel)) {
+                alert("不能输入非数字字符");
+                return false;
+                //document.getElementById("phone").innerHTML = "不能输入非数字字符";
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/adminTeacherUpdateInfo",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "id": id,
+                        "teacherDescribe":describe,
+                        "iname": iName,
+                        "tel": tel
+                    }),
+                    success: function (data) {
+                        if (data.type == 1) {
+                            alert("修改成功！");
+                            location.reload();
+                        }
+                    }
+                });
+                return true;
+            }
+
+        }
+    </script>
+</div>
+<div th:if="${session.user.userType != 0}">
+    <h1>您不是管理员!</h1>
+    <p><a class="btn btn-primary btn-lg" href="/" role="button">返回主页面</a></p>
+</div>
+</body>
+</html>

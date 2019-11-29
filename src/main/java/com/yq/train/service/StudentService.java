@@ -374,7 +374,7 @@ public class StudentService {
 
             //sheet.getLastRowNum() 的值是 10，所以Excel表中的数据至少是10条；不然报错 NullPointerException
 
-            student = new Student();
+             student = new Student();
 
             if( row.getCell(0).getCellType() !=1){//循环时，得到每一行的单元格进行判断
                 model.addAttribute("msg","文件格式不正确");

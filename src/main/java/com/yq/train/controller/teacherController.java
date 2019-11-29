@@ -216,6 +216,7 @@ public class teacherController {
                         course.setGmtModified(date);
                         courseMapper.insert(course);
                         teacher.setCourseTotal(teacher.getCourseTotal()+1);
+                        teacherMapper.updateByPrimaryKeySelective(teacher);
                         model.addAttribute("msg","课程添加成功");
                     } catch (Exception e){
                         throw new CustomizeException(CustomizeErrorCode.NOT_NUMBER);

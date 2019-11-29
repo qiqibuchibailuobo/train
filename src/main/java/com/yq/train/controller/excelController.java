@@ -8,6 +8,7 @@ import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
 import com.yq.train.service.StudentService;
+import com.yq.train.service.TeacherService;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,6 +42,8 @@ public class excelController {
     private ClassInfoMapper classInfoMapper;
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private TeacherService teacherService;
     @RequestMapping(value = "/teacherAddStudents", method = RequestMethod.POST)
     public Object exImport(MultipartFile excelFile, HttpServletRequest request, Model model) throws IOException {
 
@@ -101,7 +104,7 @@ public class excelController {
     @GetMapping("/download")   //此处尽量get请求,post不知为何有问题
     public void downLoadTemplate(HttpServletResponse response) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
-        exportExcel(workbook);
+        exportExcel(workbook,"学生姓名");
         response.setHeader("Content-type", "application/vnd.ms-excel");
 
         // 解决导出文件名中文乱码
@@ -109,8 +112,19 @@ public class excelController {
         response.setHeader("Content-Disposition", "attachment;filename=" + new String("学生导入模版".getBytes("UTF-8"), "ISO-8859-1") + ".xls");
         workbook.write(response.getOutputStream());
     }
+    @GetMapping("/downloadTeacher")   //此处尽量get请求,post不知为何有问题
+    public void downloadTeacher(HttpServletResponse response) throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        exportExcel(workbook,"教师姓名");
+        response.setHeader("Content-type", "application/vnd.ms-excel");
+
+        // 解决导出文件名中文乱码
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String("教师导入模版".getBytes("UTF-8"), "ISO-8859-1") + ".xls");
+        workbook.write(response.getOutputStream());
+    }
     //导入为模版
-    private void exportExcel(HSSFWorkbook workbook) throws Exception {
+    private void exportExcel(HSSFWorkbook workbook,String iName) throws Exception {
         //创建创建sheet
         HSSFSheet sheet = workbook.createSheet("Sheet1");
 
@@ -121,7 +135,7 @@ public class excelController {
         //设置首行标题标题
         HSSFRow headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellStyle(cellStyle);
-        headerRow.createCell(0).setCellValue("学生姓名");
+        headerRow.createCell(0).setCellValue(iName);
         headerRow.createCell(1).setCellStyle(cellStyle);
         headerRow.createCell(1).setCellValue("电话");
 
@@ -204,5 +218,30 @@ public class excelController {
             }
         }
     }
+    @RequestMapping(value = "/adminAddTeachers", method = RequestMethod.POST)
+    public Object adminAddTeachers(MultipartFile excelFile, Model model) throws IOException {
 
+        boolean a = false;
+        String fileName = excelFile.getOriginalFilename();
+
+        try {
+            model = teacherService.adminbatchImport(fileName, excelFile, model);
+            return "redirect:/admin";
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (model.getAttribute("msg")=="文件格式不正确"||model.getAttribute("msg").equals("文件格式不正确")) {
+                model.addAttribute("message", "文件格式错误或文件数据为空！");
+                return "error";
+            }else if(model.getAttribute("msg")=="输入正确姓名"||model.getAttribute("msg").equals("输入正确姓名")){
+                model.addAttribute("message", "核对表格，请输入正确姓名！");
+                return "error";
+            }else if(model.getAttribute("msg")=="输入正确电话"||model.getAttribute("msg").equals("输入正确电话")){
+                model.addAttribute("message", "核对表格，请输入正确电话！");
+                return "error";
+            }else {
+                return "error";
+            }
+        }
+        //return "redirect:/teacher";   //这里需要修改，此处存在bug
+    }
 }

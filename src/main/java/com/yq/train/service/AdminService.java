@@ -29,6 +29,8 @@ public class AdminService {
     private ClassInfoMapper classInfoMapper;
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private TeacherExtMapper teacherExtMapper;
     /**
      * 管理员返回所有学生
      * @param page
@@ -46,13 +48,8 @@ public class AdminService {
         PaginationDTO paginationDTO = new PaginationDTO();
 
         Integer totalPage;
-
-        //QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
-       // CourseQueryDTO courseQueryDTO = new CourseQueryDTO();
         StudentQueryDTO studentQueryDTO = new StudentQueryDTO();
         studentQueryDTO.setSearch(search);
-        //Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
-
         Integer totalCount = studentExtMapper.countBySearch(studentQueryDTO);
 
         if (totalCount % size == 0) {
@@ -70,12 +67,7 @@ public class AdminService {
 
         //分页size*(page-1)
         Integer offset = size * (page - 1);
-        //List<Question> questions = questionMapper.list(offset,size);
         StudentExample studentExample = new StudentExample();
-//        studentExample.setOrderByClause("gmt_create desc");
-
-//        CourseExample courseExample = new CourseExample();
-//        courseExample.setOrderByClause("gmt_create desc");
         studentQueryDTO.setSize(size);
 
         studentQueryDTO.setPage(offset);
@@ -84,9 +76,6 @@ public class AdminService {
         List<AllStudentsDTO> allStudentsDTOS = new ArrayList<>();
 
         for (Student student : students) {
-            //   System.out.println(course.getTeachingId());
-
-            //Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
             Admin admin = adminMapper.selectByPrimaryKey(1);
             AllStudentsDTO allStudentsDTO = new AllStudentsDTO();
             BeanUtils.copyProperties(student,allStudentsDTO);
@@ -132,5 +121,59 @@ public class AdminService {
         studentInfoDTO.setClassInfoDTO(classInfoDTO);
 
         return studentInfoDTO;
+    }
+    /**
+     * 管理员返回所有教师
+     * @param page
+     * @param size
+     * @return
+     */
+    public PaginationDTO listByTeacher(String search, Integer page, Integer size) {
+
+        if(StringUtils.isNotBlank(search)){
+            String [] tags = StringUtils.split(search," ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        Integer totalPage;
+        TeacherQueryDTO teacherQueryDTO = new TeacherQueryDTO();
+        teacherQueryDTO.setSearch(search);
+        Integer totalCount = teacherExtMapper.countBySearch(teacherQueryDTO);
+
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        paginationDTO.setPagination(totalPage, page);
+
+        //分页size*(page-1)
+        Integer offset = size * (page - 1);
+        StudentExample studentExample = new StudentExample();
+        teacherQueryDTO.setSize(size);
+
+        teacherQueryDTO.setPage(offset);
+        List<Teacher> teachers = teacherExtMapper.selectBySearch(teacherQueryDTO);
+
+        List<AllTeachersDTO> allTeachersDTOS = new ArrayList<>();
+
+        for (Teacher teacher : teachers) {
+            Admin admin = adminMapper.selectByPrimaryKey(1);
+            AllTeachersDTO allTeachersDTO = new AllTeachersDTO();
+            BeanUtils.copyProperties(teacher,allTeachersDTO);
+
+            allTeachersDTO.setAdmin(admin);
+            allTeachersDTO.setTeacher(teacher);
+            allTeachersDTOS.add(allTeachersDTO);
+        }
+        paginationDTO.setData(allTeachersDTOS);
+        return paginationDTO;
     }
 }
