@@ -5,6 +5,7 @@ import com.yq.train.exception.CustomizeErrorCode;
 import com.yq.train.exception.CustomizeException;
 import com.yq.train.mapper.*;
 import com.yq.train.model.*;
+import com.yq.train.tool.MD5Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -266,7 +267,8 @@ public class StudentService {
             //完整的循环一次 就组成了一个对象
             student.setiName(studentdepartments);
             student.setUserName(studentdepartments);
-            student.setUserPwd("123456");
+            MD5Utils md5Utils = new MD5Utils();
+            student.setUserPwd(md5Utils.toMD5("123456"));
             try {
                 int tel = Integer.parseInt(studentTel);
                 student.setTel(tel);
@@ -401,7 +403,8 @@ public class StudentService {
             //完整的循环一次 就组成了一个对象
             student.setiName(studentdepartments);
             student.setUserName(studentdepartments);
-            student.setUserPwd("123456");
+            MD5Utils md5Utils = new MD5Utils();
+            student.setUserPwd(md5Utils.toMD5("123456"));
             try {
                 int tel = Integer.parseInt(studentTel);
                 student.setTel(tel);

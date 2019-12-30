@@ -10,6 +10,7 @@ import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
 import com.yq.train.service.CourseService;
 import com.yq.train.service.TeacherService;
+import com.yq.train.tool.MD5Utils;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -94,7 +96,7 @@ public class teacherController {
 
     @PostMapping("/teacherUpdateInfo")
     @ResponseBody
-    public Object studentUpdateInfo(@RequestBody UpdateTeacherDTO updateTeacherDTO, HttpServletRequest request) throws IOException {
+    public Object teacherUpdateInfo(@RequestBody UpdateTeacherDTO updateTeacherDTO, HttpServletRequest request) throws IOException {
         Teacher teacher = (Teacher) request.getSession().getAttribute("user");
         if(updateTeacherDTO.getIname()==null){
             updateTeacherDTO.setType(0);
@@ -133,7 +135,7 @@ public class teacherController {
 
     @PostMapping("/teacherUpdateInfoPwd")
     @ResponseBody
-    public Object teacherUpdateInfoPwd(@RequestBody UpdateTeacherDTO updateTeacherDTO,HttpServletRequest request) throws IOException {
+    public Object teacherUpdateInfoPwd(@RequestBody UpdateTeacherDTO updateTeacherDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = (Teacher) request.getSession().getAttribute("user");
         if(updateTeacherDTO.getUserPwd().equals("")||updateTeacherDTO.getUserPwd2().equals("")&&updateTeacherDTO.getUserPwd3().equals("")){
             updateTeacherDTO.setType(0);
@@ -147,7 +149,8 @@ public class teacherController {
                     if(updateTeacherDTO.getUserPwd().length()<=4||updateTeacherDTO.getUserPwd().length()>10){
                         updateTeacherDTO.setType(4);
                     }else {
-                        teacher.setUserPwd(updateTeacherDTO.getUserPwd2());
+                        MD5Utils md5Utils = new MD5Utils();
+                        teacher.setUserPwd(md5Utils.toMD5(updateTeacherDTO.getUserPwd2()));
                         Date date = new Date();
                         teacher.setGmtModified(date);
                         TeacherExample teacherExample = new TeacherExample();
@@ -369,7 +372,7 @@ public class teacherController {
     }
     @PostMapping(value = "/addStudent")
     @ResponseBody
-    public Object addStudent(@RequestBody StudentDTO studentDTO, HttpServletRequest request) throws IOException {
+    public Object addStudent(@RequestBody StudentDTO studentDTO, HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = (Teacher)request.getSession().getAttribute("user");
         Student student = new Student();
         if(studentDTO.getIname().equals("")||studentDTO.getIname() == null){
@@ -384,7 +387,8 @@ public class teacherController {
             }else {
                 student.setiName(studentDTO.getIname());
                 student.setUserName(studentDTO.getIname());
-                student.setUserPwd("123456");
+                MD5Utils md5Utils = new MD5Utils();
+                student.setUserPwd(md5Utils.toMD5("123456"));
                 student.setTel(studentDTO.getTel());
                 student.setAddTeacher(0);
                 Date date = new Date();

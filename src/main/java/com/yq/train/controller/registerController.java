@@ -6,6 +6,7 @@ import com.yq.train.mapper.StudentMapper;
 import com.yq.train.model.ClassInfo;
 import com.yq.train.model.Student;
 import com.yq.train.model.StudentExample;
+import com.yq.train.tool.MD5Utils;
 import com.yq.train.tool.RandomValidateCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +36,7 @@ public class registerController {
 
     @PostMapping("/studentRegister")
     @ResponseBody
-    public Object studentRegister(@RequestBody StudentDTO studentDTO,HttpServletRequest request) throws IOException {
+    public Object studentRegister(@RequestBody StudentDTO studentDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         Student student = new Student();
         studentDTO.setIname(studentDTO.getIname().replace(" ",""));
         studentDTO.setUserName(studentDTO.getUserName().replace(" ",""));
@@ -61,7 +63,11 @@ public class registerController {
         else {
             student.setiName(studentDTO.getIname());
             student.setUserName(studentDTO.getUserName());
-            student.setUserPwd(studentDTO.getUserPwd());
+
+            MD5Utils md5Utils = new MD5Utils();
+            String pwd = md5Utils.toMD5(studentDTO.getUserPwd());
+
+            student.setUserPwd(pwd);
             student.setTel(studentDTO.getTel());
             student.setAddTeacher(0);
             Date date = new Date();

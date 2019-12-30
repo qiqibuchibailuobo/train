@@ -11,6 +11,7 @@ import com.yq.train.model.*;
 import com.yq.train.service.AdminService;
 import com.yq.train.service.CourseService;
 import com.yq.train.service.TeacherService;
+import com.yq.train.tool.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -121,7 +123,7 @@ public class adminController {
 
     @PostMapping("/adminStudentUpdateInfo")
     @ResponseBody
-    public Object adminStudentUpdateInfo(@RequestBody StudentDTO studentDTO) throws IOException {
+    public Object adminStudentUpdateInfo(@RequestBody StudentDTO studentDTO){
         Student student = studentMapper.selectByPrimaryKey(studentDTO.getId());
         student.setiName(studentDTO.getIname());
         student.setTel(studentDTO.getTel());
@@ -134,7 +136,7 @@ public class adminController {
 
     @PostMapping(value = "/adminAddStudent")
     @ResponseBody
-    public Object adminAddStudent(@RequestBody StudentDTO studentDTO) throws IOException {
+    public Object adminAddStudent(@RequestBody StudentDTO studentDTO) throws IOException, NoSuchAlgorithmException {
         Student student = new Student();
         if (studentDTO.getIname().equals("") || studentDTO.getIname() == null) {
             studentDTO.setType(1);
@@ -148,7 +150,8 @@ public class adminController {
             } else {
                 student.setiName(studentDTO.getIname());
                 student.setUserName(studentDTO.getIname());
-                student.setUserPwd("123456");
+                MD5Utils md5Utils = new MD5Utils();
+                student.setUserPwd(md5Utils.toMD5("123456"));
                 student.setTel(studentDTO.getTel());
                 student.setAddTeacher(0);
                 Date date = new Date();
@@ -186,6 +189,7 @@ public class adminController {
             @RequestParam(name = "size", defaultValue = "6") Integer size,
             @RequestParam(name = "search", required = false) String search,
             Model model) {
+
         if (userType == 0) {
             if (search == "") {
                 search = null;
@@ -245,7 +249,7 @@ public class adminController {
 
     @PostMapping(value = "/adminAddTeacher")
     @ResponseBody
-    public Object adminAddTeacher(@RequestBody StudentDTO studentDTO) throws IOException {
+    public Object adminAddTeacher(@RequestBody StudentDTO studentDTO) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = new Teacher();
         if (studentDTO.getIname().equals("") || studentDTO.getIname() == null) {
             studentDTO.setType(1);
@@ -259,7 +263,8 @@ public class adminController {
             } else {
                 teacher.setiName(studentDTO.getIname());
                 teacher.setUserName(studentDTO.getIname());
-                teacher.setUserPwd("123456");
+                MD5Utils md5Utils = new MD5Utils();
+                teacher.setUserPwd(md5Utils.toMD5("123456"));
                 teacher.setTel(studentDTO.getTel());
                 teacher.setTeacherDescribe("这个人很懒，没有描述。");
                 Date date = new Date();

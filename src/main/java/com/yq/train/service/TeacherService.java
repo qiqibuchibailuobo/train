@@ -10,6 +10,7 @@ import com.yq.train.mapper.CourseExtMapper;
 import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
+import com.yq.train.tool.MD5Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.T;
@@ -69,54 +70,55 @@ public class TeacherService {
         //Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
         Integer totalCount = courseExtMapper.teacherCourseCountBySearch(teacherCourseDTO);
-
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
-        paginationDTO.setPagination(totalPage, page);
-
-        //分页size*(page-1)
-        Integer offset = size * (page - 1);
-        //List<Question> questions = questionMapper.list(offset,size);
-        CourseExample courseExample = new CourseExample();
-        courseExample.setOrderByClause("gmt_create desc");
-        teacherCourseDTO.setSize(size);
-        teacherCourseDTO.setPage(offset);
-        //courseQueryDTO.setSize(size);
-
-        //courseQueryDTO.setPage(offset);
-        CourseExample courseExample1 = new CourseExample();
-        courseExample1.createCriteria()
-                .andTeachingIdEqualTo(teachingId);
-        List<Course> courses1 = courseMapper.selectByExample(courseExample1);
-
-        if(courses1.size()>0){
-            List<Course> courses = courseExtMapper.selectByTeacherCourseSearch(teacherCourseDTO);
-            List<CourseDTO> courseDTOList = new ArrayList<>();
-
-            for (Course course : courses) {
-                //   System.out.println(course.getTeachingId());
-
-                Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
-                CourseDTO courseDTO = new CourseDTO();
-                BeanUtils.copyProperties(course,courseDTO);
-                courseDTO.setTeacher(teacher);
-                courseDTOList.add(courseDTO);
+        if(totalCount != 0){
+            if (totalCount % size == 0) {
+                totalPage = totalCount / size;
+            } else {
+                totalPage = totalCount / size + 1;
             }
-            paginationDTO.setData(courseDTOList);
-        }else {
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > totalPage) {
+                page = totalPage;
+            }
+            paginationDTO.setPagination(totalPage, page);
 
+            //分页size*(page-1)
+            Integer offset = size * (page - 1);
+            //List<Question> questions = questionMapper.list(offset,size);
+            CourseExample courseExample = new CourseExample();
+            courseExample.setOrderByClause("gmt_create desc");
+            teacherCourseDTO.setSize(size);
+            teacherCourseDTO.setPage(offset);
+            //courseQueryDTO.setSize(size);
+
+            //courseQueryDTO.setPage(offset);
+            CourseExample courseExample1 = new CourseExample();
+            courseExample1.createCriteria()
+                    .andTeachingIdEqualTo(teachingId);
+            List<Course> courses1 = courseMapper.selectByExample(courseExample1);
+
+            if(courses1.size()>0){
+                List<Course> courses = courseExtMapper.selectByTeacherCourseSearch(teacherCourseDTO);
+                List<CourseDTO> courseDTOList = new ArrayList<>();
+
+                for (Course course : courses) {
+                    //   System.out.println(course.getTeachingId());
+
+                    Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
+                    CourseDTO courseDTO = new CourseDTO();
+                    BeanUtils.copyProperties(course,courseDTO);
+                    courseDTO.setTeacher(teacher);
+                    courseDTOList.add(courseDTO);
+                }
+                paginationDTO.setData(courseDTOList);
+            }else {
+                paginationDTO.setData(null);
+            }
+        }else {
             paginationDTO.setData(null);
         }
-
         return paginationDTO;
     }
     @Transactional(readOnly = false,rollbackFor = Exception.class)
@@ -183,7 +185,8 @@ public class TeacherService {
             //完整的循环一次 就组成了一个对象
             teacher.setiName(studentdepartments);
             teacher.setUserName(studentdepartments);
-            teacher.setUserPwd("123456");
+            MD5Utils md5Utils = new MD5Utils();
+            teacher.setUserPwd(md5Utils.toMD5("123456"));
             try {
                 int tel = Integer.parseInt(studentTel);
                 teacher.setTel(tel);

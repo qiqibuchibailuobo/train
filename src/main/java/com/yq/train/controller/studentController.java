@@ -11,6 +11,7 @@ import com.yq.train.mapper.CourseMapper;
 import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
+import com.yq.train.tool.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -178,7 +180,7 @@ public class studentController {
     }
     @PostMapping("/studentUpdateInfoPwd")
     @ResponseBody
-    public Object studentUpdateInfoPwd(@RequestBody UpdateStudentDTO updateStudentDTO,HttpServletRequest request) throws IOException {
+    public Object studentUpdateInfoPwd(@RequestBody UpdateStudentDTO updateStudentDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         Student student = (Student)request.getSession().getAttribute("user");
         if(updateStudentDTO.getUserPwd().equals("")||updateStudentDTO.getUserPwd2().equals("")&&updateStudentDTO.getUserPwd3().equals("")){
             updateStudentDTO.setType(0);
@@ -189,7 +191,9 @@ public class studentController {
                 if(!updateStudentDTO.getUserPwd2().equals(updateStudentDTO.getUserPwd3())){
                     updateStudentDTO.setType(2);
                 }else {
-                    student.setUserPwd(updateStudentDTO.getUserPwd2());
+                    MD5Utils md5Utils = new MD5Utils();
+
+                    student.setUserPwd(md5Utils.toMD5(updateStudentDTO.getUserPwd2()));
                     Date date = new Date();
                     student.setGmtModified(date);
                     StudentExample studentExample = new StudentExample();

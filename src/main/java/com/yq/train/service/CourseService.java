@@ -64,43 +64,47 @@ public class CourseService {
         //Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
         Integer totalCount = courseExtMapper.countBySearch(courseQueryDTO);
+        if (totalCount != 0){
+            if (totalCount % size == 0) {
+                totalPage = totalCount / size;
+            } else {
+                totalPage = totalCount / size + 1;
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > totalPage) {
+                page = totalPage;
+            }
+            paginationDTO.setPagination(totalPage, page);
 
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
+            //分页size*(page-1)
+            Integer offset = size * (page - 1);
+            //List<Question> questions = questionMapper.list(offset,size);
+            CourseExample courseExample = new CourseExample();
+            courseExample.setOrderByClause("gmt_create desc");
+            courseQueryDTO.setSize(size);
+
+            courseQueryDTO.setPage(offset);
+            List<Course> courses = courseExtMapper.selectBySearch(courseQueryDTO);
+
+            List<CourseDTO> courseDTOList = new ArrayList<>();
+
+            for (Course course : courses) {
+                //   System.out.println(course.getTeachingId());
+
+                Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
+                CourseDTO courseDTO = new CourseDTO();
+                BeanUtils.copyProperties(course,courseDTO);
+
+                courseDTO.setTeacher(teacher);
+                courseDTOList.add(courseDTO);
+            }
+            paginationDTO.setData(courseDTOList);
+        }else {
+            paginationDTO.setData(null);
         }
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
-        paginationDTO.setPagination(totalPage, page);
 
-        //分页size*(page-1)
-        Integer offset = size * (page - 1);
-        //List<Question> questions = questionMapper.list(offset,size);
-        CourseExample courseExample = new CourseExample();
-        courseExample.setOrderByClause("gmt_create desc");
-        courseQueryDTO.setSize(size);
-
-        courseQueryDTO.setPage(offset);
-        List<Course> courses = courseExtMapper.selectBySearch(courseQueryDTO);
-
-        List<CourseDTO> courseDTOList = new ArrayList<>();
-
-        for (Course course : courses) {
-         //   System.out.println(course.getTeachingId());
-
-            Teacher teacher = teacherMapper.selectByPrimaryKey(course.getTeachingId());
-            CourseDTO courseDTO = new CourseDTO();
-            BeanUtils.copyProperties(course,courseDTO);
-
-            courseDTO.setTeacher(teacher);
-            courseDTOList.add(courseDTO);
-        }
-        paginationDTO.setData(courseDTOList);
         return paginationDTO;
     }
 

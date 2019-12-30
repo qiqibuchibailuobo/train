@@ -9,6 +9,7 @@ import com.yq.train.mapper.StudentMapper;
 import com.yq.train.mapper.TeacherMapper;
 import com.yq.train.model.*;
 import com.yq.train.service.CourseService;
+import com.yq.train.tool.MD5Utils;
 import com.yq.train.tool.RandomValidateCodeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +51,7 @@ public class loginController {
                        HttpServletRequest request,
                      HttpServletResponse response,
                        Model model,
-                       HttpSession session) throws IOException {
+                       HttpSession session) throws IOException, NoSuchAlgorithmException {
         //requestbody接收前端传来的json数据
         //responsebody将后台数据序列化成json传到前端
         //通过session获取当前用户
@@ -58,20 +60,24 @@ public class loginController {
         StudentExample studentExample = new StudentExample();
         TeacherExample teacherExample = new TeacherExample();
         AdminExample adminExample = new AdminExample();
+        MD5Utils md5Utils = new MD5Utils();
+
+
         if(userDTO.getUsername()!=null&&userDTO.getPassword()!=null){
             adminExample.createCriteria()
                     .andINameEqualTo(userDTO.getUsername())
-                    .andAdminPwdEqualTo(userDTO.getPassword());
+                    .andAdminPwdEqualTo(md5Utils.toMD5(userDTO.getPassword()));
             List<Admin> admins = adminMapper.selectByExample(adminExample);
 
             studentExample.createCriteria()
                     .andUserNameEqualTo(userDTO.getUsername())
-                    .andUserPwdEqualTo(userDTO.getPassword());
+                    .andUserPwdEqualTo(md5Utils.toMD5(userDTO.getPassword()));
             List<Student> students = studentMapper.selectByExample(studentExample);
 
             teacherExample.createCriteria()
                     .andUserNameEqualTo(userDTO.getUsername())
-                    .andUserPwdEqualTo(userDTO.getPassword());
+                    .andUserPwdEqualTo(md5Utils.toMD5(userDTO.getPassword()));
+
             List<Teacher> teachers = teacherMapper.selectByExample(teacherExample);
 
             if(admins.size()>0){

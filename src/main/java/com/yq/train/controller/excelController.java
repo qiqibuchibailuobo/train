@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,7 +75,6 @@ public class excelController {
         }
         //return "redirect:/teacher";   //这里需要修改，此处存在bug
     }
-
     @RequestMapping(value = "/adminAddStudents", method = RequestMethod.POST)
     public Object adminAddStudents(MultipartFile excelFile, Model model) throws IOException {
 
