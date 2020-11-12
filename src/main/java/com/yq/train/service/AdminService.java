@@ -123,7 +123,6 @@ public class AdminService {
         StudentInfoDTO studentInfoDTO = new StudentInfoDTO();
         studentInfoDTO.setStudent(student);
         studentInfoDTO.setClassInfoDTO(classInfoDTO);
-
         return studentInfoDTO;
     }
     /**
