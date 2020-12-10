@@ -33,6 +33,13 @@ public class courseController {
     private ClassInfoMapper classInfoMapper;
     @Autowired
     private StudentMapper studentMapper;
+
+    /**
+     * 查看所有课程
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/course/{id}")
     public String course(
             @PathVariable(name = "id") int id,
@@ -42,6 +49,18 @@ public class courseController {
         model.addAttribute("course",courseDTO);
         return "course";
     }
+
+    /**
+     * 查看一个课程内一个学生的信息
+     * @param request
+     * @param id
+     * @param userType
+     * @param page
+     * @param size
+     * @param search
+     * @param model
+     * @return
+     */
     @GetMapping("/course/{id}/students/{userType}")
     public String courseStudents(
             HttpServletRequest request,
@@ -83,6 +102,18 @@ public class courseController {
             }
         }
     }
+
+    /**
+     * 显示一个课程中的学生
+     * @param request
+     * @param id
+     * @param userType
+     * @param page
+     * @param size
+     * @param search
+     * @param model
+     * @return
+     */
     @GetMapping("/course/{id}/Allstudents/{userType}")
     public String courseAllStudents(
             HttpServletRequest request,

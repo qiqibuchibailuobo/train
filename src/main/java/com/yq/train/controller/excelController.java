@@ -45,6 +45,15 @@ public class excelController {
     private CourseMapper courseMapper;
     @Autowired
     private TeacherService teacherService;
+
+    /**
+     * 教师批量添加学生
+     * @param excelFile
+     * @param request
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/teacherAddStudents", method = RequestMethod.POST)
     public Object exImport(MultipartFile excelFile, HttpServletRequest request, Model model) throws IOException {
 
@@ -75,6 +84,14 @@ public class excelController {
         }
         //return "redirect:/teacher";   //这里需要修改，此处存在bug
     }
+
+    /**
+     * 管理员批量添加学生
+     * @param excelFile
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/adminAddStudents", method = RequestMethod.POST)
     public Object adminAddStudents(MultipartFile excelFile, Model model) throws IOException {
 
@@ -101,6 +118,12 @@ public class excelController {
         }
         //return "redirect:/teacher";   //这里需要修改，此处存在bug
     }
+
+    /**
+     * 下载批量导入学生exl模板
+     * @param response
+     * @throws Exception
+     */
     @GetMapping("/download")   //此处尽量get请求,post不知为何有问题
     public void downLoadTemplate(HttpServletResponse response) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -112,6 +135,12 @@ public class excelController {
         response.setHeader("Content-Disposition", "attachment;filename=" + new String("学生导入模版".getBytes("UTF-8"), "ISO-8859-1") + ".xls");
         workbook.write(response.getOutputStream());
     }
+
+    /**
+     * 下载批量导入教师exl模板
+     * @param response
+     * @throws Exception
+     */
     @GetMapping("/downloadTeacher")   //此处尽量get请求,post不知为何有问题
     public void downloadTeacher(HttpServletResponse response) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -149,6 +178,13 @@ public class excelController {
             row.createCell(1).setCellValue(235254);
         }
     }
+
+    /**
+     * 导出一个教师的学生的信息表
+     * @param response
+     * @param courseid
+     * @throws Exception
+     */
     @GetMapping("/downloadTeacherStudents/{id}")   //此处尽量get请求,post不知为何有问题
     public void downloadTeacherStudents(HttpServletResponse response,
                                         @PathVariable(name = "id") int courseid) throws Exception {
@@ -218,6 +254,14 @@ public class excelController {
             }
         }
     }
+
+    /**
+     * 管理员批量加入教师
+     * @param excelFile
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/adminAddTeachers", method = RequestMethod.POST)
     public Object adminAddTeachers(MultipartFile excelFile, Model model) throws IOException {
 

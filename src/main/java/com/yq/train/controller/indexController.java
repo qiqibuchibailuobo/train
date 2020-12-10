@@ -19,6 +19,15 @@ public class indexController {
     @Autowired
     private CourseService courseService;
 
+    /**
+     * 显示主页面
+     * @param model
+     * @param request
+     * @param page
+     * @param size
+     * @param search
+     * @return
+     */
     @GetMapping("/")
     public String index(Model model,
                         HttpServletRequest request,

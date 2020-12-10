@@ -39,6 +39,13 @@ public class studentController {
     private CourseMapper courseMapper;
     @Autowired
     private ClassInfoMapper classInfoMapper;
+
+    /**
+     * 学生主页面
+     * @param request
+     * @param model
+     * @return
+     */
     @GetMapping("/student")
     public String loginStudent(HttpServletRequest request, Model model){
         Student student =(Student) request.getSession().getAttribute("user");
@@ -92,6 +99,13 @@ public class studentController {
         return "student";
     }
 
+    /**
+     * 学生更新头像
+     * @param file
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/studentUpdateImage")
     public String  studentUpdateInfoImage(
                                     MultipartFile file,
@@ -152,6 +166,13 @@ public class studentController {
 //        }
 //    }
 
+    /**
+     * 学生更新信息
+     * @param updateStudentDTO
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/studentUpdateInfo")
     @ResponseBody
     public Object studentUpdateInfo(@RequestBody UpdateStudentDTO updateStudentDTO,HttpServletRequest request) throws IOException {
@@ -178,6 +199,15 @@ public class studentController {
 
         return updateStudentDTO;
     }
+
+    /**
+     * 学生更新密码
+     * @param updateStudentDTO
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping("/studentUpdateInfoPwd")
     @ResponseBody
     public Object studentUpdateInfoPwd(@RequestBody UpdateStudentDTO updateStudentDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {

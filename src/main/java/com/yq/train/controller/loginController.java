@@ -43,7 +43,17 @@ public class loginController {
 //    private final static Logger logger = LoggerFactory.getLogger(Picverifyaction.class);
 
 
-
+    /**
+     * 登录
+     * @param userDTO
+     * @param request
+     * @param response
+     * @param model
+     * @param session
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
 //    @RequestMapping(value = "/login",method = RequestMethod.POST)
     @PostMapping("/login")
     @ResponseBody
@@ -157,7 +167,11 @@ public class loginController {
     }
 
 
-
+    /**
+     * 注销
+     * @param request
+     * @return
+     */
     @GetMapping("/logout")
     public String logout(HttpServletRequest request){
         request.getSession().removeAttribute("user");

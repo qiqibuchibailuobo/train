@@ -43,6 +43,16 @@ public class teacherController {
     private CourseService courseService;
     @Autowired
     private ClassInfoMapper classInfoMapper;
+
+    /**
+     * 教师登录主界面
+     * @param model
+     * @param request
+     * @param page1
+     * @param size1
+     * @param search1
+     * @return
+     */
     @GetMapping("/teacher")
     public String loginTeacher(Model model,
                                HttpServletRequest request,
@@ -59,6 +69,13 @@ public class teacherController {
         return "teacher";
     }
 
+    /**
+     * 教师更新头像
+     * @param file
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/teacherUpdateImage")
     public String  teacherUpdateInfoImage(
             MultipartFile file,
@@ -93,7 +110,13 @@ public class teacherController {
         return "redirect:/teacher";
     }
 
-
+    /**
+     * 教师更新信息
+     * @param updateTeacherDTO
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/teacherUpdateInfo")
     @ResponseBody
     public Object teacherUpdateInfo(@RequestBody UpdateTeacherDTO updateTeacherDTO, HttpServletRequest request) throws IOException {
@@ -133,6 +156,14 @@ public class teacherController {
         return true;
     }
 
+    /**
+     * 教师更新密码
+     * @param updateTeacherDTO
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping("/teacherUpdateInfoPwd")
     @ResponseBody
     public Object teacherUpdateInfoPwd(@RequestBody UpdateTeacherDTO updateTeacherDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
@@ -165,6 +196,19 @@ public class teacherController {
         }
         return updateTeacherDTO;
     }
+
+    /**
+     * 教师添加课程
+     * @param file1
+     * @param request
+     * @param model
+     * @param courseDescribe
+     * @param price
+     * @param classTime
+     * @param classHour
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/addCourse" )
     public String  addCourse(
             MultipartFile file1,
@@ -243,6 +287,14 @@ public class teacherController {
         }
         return true;
     }
+
+    /**
+     * 教师修改自己的课程
+     * @param updateCourseDTO
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping(value = "/updateCourse")
     @ResponseBody
     public Object updateCourse(@RequestBody UpdateCourseDTO updateCourseDTO, HttpServletRequest request) throws IOException {
@@ -265,6 +317,18 @@ public class teacherController {
 
         return updateCourseDTO;
     }
+
+    /**
+     * 教师修改自己课程的展示图
+     * @param file
+     * @param request
+     * @param courseId
+     * @param teachingId
+     * @param userType
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/courseUpdateImage")
     public String  courseUpdateImage(
             MultipartFile file,
@@ -316,6 +380,13 @@ public class teacherController {
        // return "redirect:/teacher";
     }
 
+    /**
+     * 教师删除自己的课程
+     * @param updateCourseDTO
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping(value = "/deleteCourse")
     @ResponseBody
     public Object deleteCourse(@RequestBody UpdateCourseDTO updateCourseDTO, HttpServletRequest request) throws IOException {
@@ -370,6 +441,15 @@ public class teacherController {
 
         return updateCourseDTO;
     }
+
+    /**
+     * 教师添加自己的学生
+     * @param studentDTO
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping(value = "/addStudent")
     @ResponseBody
     public Object addStudent(@RequestBody StudentDTO studentDTO, HttpServletRequest request) throws IOException, NoSuchAlgorithmException {

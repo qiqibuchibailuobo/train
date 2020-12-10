@@ -121,6 +121,11 @@ public class adminController {
         return deleteStudentDTO;
     }
 
+    /**
+     * 管理员修改学生信息
+     * @param studentDTO
+     * @return
+     */
     @PostMapping("/adminStudentUpdateInfo")
     @ResponseBody
     public Object adminStudentUpdateInfo(@RequestBody StudentDTO studentDTO){
@@ -134,6 +139,13 @@ public class adminController {
         return studentDTO;
     }
 
+    /**
+     * 管理员添加学生
+     * @param studentDTO
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping(value = "/adminAddStudent")
     @ResponseBody
     public Object adminAddStudent(@RequestBody StudentDTO studentDTO) throws IOException, NoSuchAlgorithmException {
@@ -181,6 +193,16 @@ public class adminController {
         return studentDTO;
     }
 
+    /**
+     * 管理员页面显示所有教师
+     * @param request
+     * @param userType
+     * @param page
+     * @param size
+     * @param search
+     * @param model
+     * @return
+     */
     @GetMapping("/allTeachers/{userType}")
     public String allTeachers(
             HttpServletRequest request,
@@ -247,6 +269,13 @@ public class adminController {
         return deleteStudentDTO;
     }
 
+    /**
+     * 管理员添加教师
+     * @param studentDTO
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping(value = "/adminAddTeacher")
     @ResponseBody
     public Object adminAddTeacher(@RequestBody StudentDTO studentDTO) throws IOException, NoSuchAlgorithmException {
@@ -281,6 +310,16 @@ public class adminController {
         return studentDTO;
     }
 
+    /**
+     * 管理员查看详细教师界面
+     * @param model
+     * @param request
+     * @param id
+     * @param page1
+     * @param size1
+     * @param search1
+     * @return
+     */
     @GetMapping("/adminTeachers/{id}")
     public String adminTeachers(Model model,
                                 HttpServletRequest request,
@@ -299,6 +338,19 @@ public class adminController {
         return "adminTeacher";
     }
 
+    /**
+     * 管理员添加课程
+     * @param file1
+     * @param request
+     * @param model
+     * @param id
+     * @param courseDescribe
+     * @param price
+     * @param classTime
+     * @param classHour
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/adminAddCourse")
     public String adminAddCourse(
             MultipartFile file1,
@@ -381,6 +433,13 @@ public class adminController {
         return true;
     }
 
+    /**
+     * 管理员修改教师信息
+     * @param updateTeacherDTO
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/adminTeacherUpdateInfo")
     @ResponseBody
     public Object adminTeacherUpdateInfo(@RequestBody UpdateTeacherDTO updateTeacherDTO, HttpServletRequest request) throws IOException {

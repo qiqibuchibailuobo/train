@@ -33,7 +33,14 @@ public class registerController {
         return "register";
     }
 
-
+    /**
+     * 学生注册
+     * @param studentDTO
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     @PostMapping("/studentRegister")
     @ResponseBody
     public Object studentRegister(@RequestBody StudentDTO studentDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
