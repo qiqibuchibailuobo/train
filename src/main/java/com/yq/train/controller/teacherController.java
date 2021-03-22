@@ -168,10 +168,13 @@ public class teacherController {
     @ResponseBody
     public Object teacherUpdateInfoPwd(@RequestBody UpdateTeacherDTO updateTeacherDTO,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = (Teacher) request.getSession().getAttribute("user");
+       // MD5Utils md5Utils = new MD5Utils();
         if(updateTeacherDTO.getUserPwd().equals("")||updateTeacherDTO.getUserPwd2().equals("")&&updateTeacherDTO.getUserPwd3().equals("")){
             updateTeacherDTO.setType(0);
         }else {
-            if(!teacher.getUserPwd().equals(updateTeacherDTO.getUserPwd())){
+            MD5Utils md5Utils = new MD5Utils();
+            String a= md5Utils.toMD5(updateTeacherDTO.getUserPwd());
+            if(!teacher.getUserPwd().equals(a)){
                 updateTeacherDTO.setType(1);
             }else {
                 if(!updateTeacherDTO.getUserPwd2().equals(updateTeacherDTO.getUserPwd3())){
@@ -180,8 +183,9 @@ public class teacherController {
                     if(updateTeacherDTO.getUserPwd().length()<=4||updateTeacherDTO.getUserPwd().length()>10){
                         updateTeacherDTO.setType(4);
                     }else {
-                        MD5Utils md5Utils = new MD5Utils();
+                       // MD5Utils md5Utils = new MD5Utils();
                         teacher.setUserPwd(md5Utils.toMD5(updateTeacherDTO.getUserPwd2()));
+                        //teacher.setUserPwd(updateTeacherDTO.getUserPwd2());
                         Date date = new Date();
                         teacher.setGmtModified(date);
                         TeacherExample teacherExample = new TeacherExample();

@@ -215,13 +215,15 @@ public class studentController {
         if(updateStudentDTO.getUserPwd().equals("")||updateStudentDTO.getUserPwd2().equals("")&&updateStudentDTO.getUserPwd3().equals("")){
             updateStudentDTO.setType(0);
         }else {
-            if(!student.getUserPwd().equals(updateStudentDTO.getUserPwd())){
+            MD5Utils md5Utils = new MD5Utils();
+            String a = md5Utils.toMD5(updateStudentDTO.getUserPwd());
+            if(!student.getUserPwd().equals(a)){
                 updateStudentDTO.setType(1);
             }else {
                 if(!updateStudentDTO.getUserPwd2().equals(updateStudentDTO.getUserPwd3())){
                     updateStudentDTO.setType(2);
                 }else {
-                    MD5Utils md5Utils = new MD5Utils();
+                   // MD5Utils md5Utils = new MD5Utils();
 
                     student.setUserPwd(md5Utils.toMD5(updateStudentDTO.getUserPwd2()));
                     Date date = new Date();
@@ -231,6 +233,7 @@ public class studentController {
                             .andIdEqualTo(student.getId());
                     studentMapper.updateByExampleSelective(student,studentExample);
                     updateStudentDTO.setType(3);
+
                 }
             }
         }
